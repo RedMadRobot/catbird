@@ -1,0 +1,11 @@
+platform :ios, '12.0'
+
+target 'CatbirdX' do
+  use_frameworks!
+
+  target 'CatbirdXUITests' do
+    inherit! :search_paths
+
+    pod 'Catbird'
+  end
+end

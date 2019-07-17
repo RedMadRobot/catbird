@@ -1,0 +1,6 @@
+Packages
+.build
+xcuserdata
+Catbird.xcodeproj
+DerivedData/
+.DS_Store

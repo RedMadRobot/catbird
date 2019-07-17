@@ -1,0 +1,47 @@
+body {
+  padding-top: 10px;
+  padding-bottom: 30px;
+}
+
+.row {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.code-highlight {
+  background-color: #f7f7f9;
+  padding: 1rem;
+  font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-size: 85%;
+}
+
+.header-link {
+  color: black;
+}
+
+.method {
+  padding: 0.4em;
+  border-radius: .25rem;
+  color: #383d41;
+  background-color: #e2e3e5;
+}
+
+.method.get {
+  color: #004085;
+  background-color: #cce5ff;
+}
+
+.method.post {
+  color: #155724;
+  background-color: #d4edda;
+}
+
+.method.delete {
+  color: #721c24;
+  background-color: #f8d7da;
+}
+
+.method.put {
+  color: #856404;
+  background-color: #fff3cd;
+}
