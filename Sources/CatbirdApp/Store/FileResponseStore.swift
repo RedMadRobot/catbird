@@ -24,8 +24,8 @@ final class FileResponseStore: ResponseStore {
     func setResponse(data: ResponseData?, for pattern: RequestPattern) throws {
         guard let body = data?.body else { return }
 
-        let url = URL(fileURLWithPath: path + pattern.url.path, isDirectory: false)
-        try createDirectories(for: pattern.url)
+        let url = URL(fileURLWithPath: path + pattern.url.value, isDirectory: false)
+        try createDirectories(for: URL(string: pattern.url.value)!) // TODO: 
         try body.write(to: url)
     }
 
