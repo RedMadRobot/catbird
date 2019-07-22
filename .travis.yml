@@ -22,3 +22,6 @@ deploy:
   file: catbird.zip
   on:
     tags: true
+
+after_deploy:
+  - bundle exec pod trunk push Catbird.podspec
