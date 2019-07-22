@@ -8,11 +8,12 @@ final class DataResponseStore: ResponseStore, BagsResponseStore {
     // MARK: - ResponseStore
 
     func response(for request: Request) throws -> Response {
-        let pattern = RequestPattern(method: request.http.method.string,
-                                     url: request.http.url,
-                                     headerFields: [:])
-        guard let response = bags[pattern] else { throw Abort(.notFound) }
-        return request.response(http: response.httpResponse)
+        for (pattern, response) in bags {
+            if pattern.match(request.http) {
+                return request.response(http: response.httpResponse)
+            }
+        }
+        throw Abort(.notFound)
     }
 
     func setResponse(data: ResponseData?, for pattern: RequestPattern) throws {

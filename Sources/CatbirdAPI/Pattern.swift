@@ -5,9 +5,9 @@ import Foundation
 /// - equal: The request value must be equal pattern value
 /// - glob: The request value match with glob pattern
 /// - regexp: The request value match with regular expression pattern
-public enum Pattern: Codable, Equatable {
+public enum Pattern: Codable, Hashable {
     
-    /// Example: `/api/users/0`
+    /// Example: `/api/users/1`
     case equal(String)
     
     /// Example: `/api/users/*`
@@ -54,7 +54,7 @@ public enum Pattern: Codable, Equatable {
         case .glob :
             self = .glob(value)
         case .regexp :
-            self = .glob(value)
+            self = .regexp(value)
         }
     }
     
@@ -71,5 +71,35 @@ public enum Pattern: Codable, Equatable {
             try container.encode(Kind.regexp, forKey: .kind)
             try container.encode(value, forKey: .value)
         }
+    }
+}
+
+
+/// Protocol for converting common types to Pattern
+public protocol PatternRepresentable {
+    func convertToPattern() -> Pattern
+}
+
+extension Pattern: PatternRepresentable {
+    public func convertToPattern() -> Pattern {
+        return self
+    }
+}
+
+extension String: PatternRepresentable {
+    public func convertToPattern() -> Pattern {
+        return .equal(self)
+    }
+}
+
+extension URL: PatternRepresentable {
+    public func convertToPattern() -> Pattern {
+        return .equal(self.absoluteString)
+    }
+}
+
+extension NSRegularExpression: PatternRepresentable {
+    public func convertToPattern() -> Pattern {
+        return .regexp(self.pattern)
     }
 }

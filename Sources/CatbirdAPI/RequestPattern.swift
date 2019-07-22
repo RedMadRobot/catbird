@@ -8,6 +8,7 @@ public struct RequestPattern: Codable, Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(url.value)
         hasher.combine(method)
+        hasher.combine(headerFields)
     }
     
     /// HTTP method.
@@ -25,34 +26,34 @@ public struct RequestPattern: Codable, Hashable {
     ///   - method: HTTP method.
     ///   - url: Request URL.
     ///   - headerFields: Request required headers. Default empty.
-    public init(method: String, url: Pattern, headerFields: [String: Pattern] = [:]) {
+    public init(method: String, url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) {
         self.method = method
-        self.url = url
-        self.headerFields = headerFields
+        self.url = url.convertToPattern()
+        self.headerFields = headerFields.mapValues { $0.convertToPattern() }
     }
 
     /// A new pattern for `GET` request.
-    public static func get(_ url: Pattern, headerFields: [String: Pattern] = [:]) -> RequestPattern {
+    public static func get(_ url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) -> RequestPattern {
         return RequestPattern(method: "GET", url: url, headerFields: headerFields)
     }
 
     /// A new pattern for `POST` request.
-    public static func post(_ url: Pattern, headerFields: [String: Pattern] = [:]) -> RequestPattern {
+    public static func post(_ url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) -> RequestPattern {
         return RequestPattern(method: "POST", url: url, headerFields: headerFields)
     }
 
     /// A new pattern for `PUT` request.
-    public static func put(_ url: Pattern, headerFields: [String: Pattern] = [:]) -> RequestPattern {
+    public static func put(_ url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) -> RequestPattern {
         return RequestPattern(method: "PUT", url: url, headerFields: headerFields)
     }
 
     /// A new pattern for `PATCH` request.
-    public static func patch(_ url: Pattern, headerFields: [String: Pattern] = [:]) -> RequestPattern {
+    public static func patch(_ url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) -> RequestPattern {
         return RequestPattern(method: "PATCH", url: url, headerFields: headerFields)
     }
 
     /// A new pattern for `DELETE` request.
-    public static func delete(_ url: Pattern, headerFields: [String: Pattern] = [:]) -> RequestPattern {
+    public static func delete(_ url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) -> RequestPattern {
         return RequestPattern(method: "DELETE", url: url, headerFields: headerFields)
     }
 

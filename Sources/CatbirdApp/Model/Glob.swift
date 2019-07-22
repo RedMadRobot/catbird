@@ -1,5 +1,7 @@
 import Foundation
 
+/// Convert glob pattern to regualr expression and check string match.
+/// This is Swift implementation of the JS library https://github.com/fitzgen/glob-to-regexp
 public struct Glob {
     
     let globPattern: String
