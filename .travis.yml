@@ -24,4 +24,4 @@ deploy:
     tags: true
 
 after_deploy:
-  - pod trunk push Catbird.podspec
+  - bundle exec pod trunk push Catbird.podspec
