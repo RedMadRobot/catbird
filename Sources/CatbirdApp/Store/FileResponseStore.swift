@@ -23,9 +23,15 @@ final class FileResponseStore: ResponseStore {
 
     func setResponse(data: ResponseData?, for pattern: RequestPattern) throws {
         guard let body = data?.body else { return }
-
-        let url = URL(fileURLWithPath: path + pattern.url.value, isDirectory: false)
-        try createDirectories(for: URL(string: pattern.url.value)!) // TODO: 
+        
+        let patternPath: String
+        if case .equal(let value) = pattern.url, let url = URL(string: value) {
+            patternPath = url.path
+        } else {
+            patternPath = pattern.url.value.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        }
+        let url = URL(fileURLWithPath: path + patternPath, isDirectory: false)
+        try createDirectories(for: url)
         try body.write(to: url)
     }
 
@@ -34,16 +40,8 @@ final class FileResponseStore: ResponseStore {
     // MARK: - Private
 
     private func createDirectories(for url: URL) throws {
-        // Remove first component "/" and last with file name
-        let pathComponents = url.pathComponents.dropFirst().dropLast()
-        guard !pathComponents.isEmpty else { return }
-
-        try pathComponents
-            .indices
-            .map { pathComponents[...$0].joined(separator: "/") }
-            .map { "\(path)/\($0)" }
-            .filter { !fileManager.fileExists(atPath: $0, isDirectory: nil) }
-            .map { URL(fileURLWithPath: $0, isDirectory: true) }
-            .forEach { try fileManager.createDirectory(at: $0, withIntermediateDirectories: true) }
+        // Remove file name
+        let dirUrl = url.deletingLastPathComponent()
+        try fileManager.createDirectory(at: dirUrl, withIntermediateDirectories: true)
     }
 }
