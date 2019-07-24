@@ -1,4 +1,4 @@
-import CatbirdAPI
+import struct CatbirdAPI.Pattern
 import XCTest
 
 final class PatternTests: XCTestCase {

@@ -4,7 +4,7 @@ import Foundation
 /// This is Swift implementation of the JS library https://github.com/fitzgen/glob-to-regexp
 public struct Glob {
     
-    let globPattern: String
+    let pattern: String
     
     /// When globstar is _false_ (default), `'/foo/*'` is translated a regexp like
     /// `'^\/foo\/.*$'` which will match any string beginning with `'/foo/'`
@@ -21,8 +21,8 @@ public struct Glob {
     /// - Parameters:
     ///   - globPattern: Glob pattern
     ///   - globstar: see `globstar` property
-    public init(globPattern: String, globstar: Bool = false) {
-        self.globPattern = globPattern
+    public init(pattern: String, globstar: Bool = false) {
+        self.pattern = pattern
         self.globstar = globstar
     }
     
@@ -34,8 +34,8 @@ public struct Glob {
         var index = 0
         var inGroup = false
         
-        while index < globPattern.count {
-            let char = globPattern[index]
+        while index < pattern.count {
+            let char = pattern[index]
             
             switch char {
             case "/", "$", "^", "+", ".", "(", ")", "=", "!", "|":
@@ -59,13 +59,13 @@ public struct Glob {
             case "*":
                 // Move over all consecutive "*"'s.
                 // Also store the previous and next characters
-                let prevChar: Character? = index > 0 ? globPattern[index - 1] : nil
+                let prevChar: Character? = index > 0 ? pattern[index - 1] : nil
                 var starCount = 1
-                while(index + 1 < globPattern.count && globPattern[index + 1] == "*") {
+                while(index + 1 < pattern.count && pattern[index + 1] == "*") {
                     starCount += 1
                     index += 1
                 }
-                let nextChar: Character? = index + 1 < globPattern.count ? globPattern[index + 1] : nil
+                let nextChar: Character? = index + 1 < pattern.count ? pattern[index + 1] : nil
                 
                 if !globstar {
                     // globstar is disabled, so treat any number of "*" as one

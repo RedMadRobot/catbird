@@ -1,105 +1,64 @@
 import Foundation
 
 /// The kind of pattern for matching request fields such as url and headers
-///
-/// - equal: The request value must be equal pattern value
-/// - glob: The request value match with glob pattern
-/// - regexp: The request value match with regular expression pattern
-public enum Pattern: Codable, Hashable {
+public struct Pattern: Codable, Hashable {
     
-    /// Example: `/api/users/1`
-    case equal(String)
+    // MARK: - Public types
     
-    /// Example: `/api/users/*`
-    case glob(String)
-    
-    /// Example: `^api/users/.+$`
-    case regexp(String)
-    
-    
-    // MARK: - Private types
-    
-    private enum Kind: String, Codable {
+    /// - equal: The request value must be equal pattern value
+    /// - glob: The request value match with glob pattern
+    /// - regexp: The request value match with regular expression pattern
+    public enum Kind: String, Codable {
         case equal, glob, regexp
-    }
-    
-    private enum CodingKeys: String, CodingKey {
-        case kind, value
     }
     
     
     // MARK: - Public properties
     
-    public var value: String {
-        switch self {
-        case .equal(let value):
-            return value
-        case .glob(let value):
-            return value
-        case .regexp(let value):
-            return value
-        }
+    public let kind: Kind
+    public let value: String
+    
+    
+    // MARK: - Init
+    
+    public init(kind: Kind, value: String) {
+        self.kind = kind
+        self.value = value
     }
     
-    
-    // MARK: - Codable
-    
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let kind = try container.decode(Kind.self, forKey: .kind)
-        let value = try container.decode(String.self, forKey: .value)
-        switch kind {
-        case .equal:
-            self = .equal(value)
-        case .glob :
-            self = .glob(value)
-        case .regexp :
-            self = .regexp(value)
-        }
+    public static func equal(_ value: String) -> Pattern {
+        return Pattern(kind: .equal, value: value)
     }
     
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        switch self {
-        case .equal(let value):
-            try container.encode(Kind.equal, forKey: .kind)
-            try container.encode(value, forKey: .value)
-        case .glob(let value):
-            try container.encode(Kind.glob, forKey: .kind)
-            try container.encode(value, forKey: .value)
-        case .regexp(let value):
-            try container.encode(Kind.regexp, forKey: .kind)
-            try container.encode(value, forKey: .value)
-        }
+    public static func glob(_ value: String) -> Pattern {
+        return Pattern(kind: .glob, value: value)
+    }
+    
+    public static func regexp(_ value: String) -> Pattern {
+        return Pattern(kind: .regexp, value: value)
     }
 }
 
 
 /// Protocol for converting common types to Pattern
 public protocol PatternRepresentable {
-    func convertToPattern() -> Pattern
+    var pattern: Pattern { get }
 }
 
 extension Pattern: PatternRepresentable {
-    public func convertToPattern() -> Pattern {
+    public var pattern: Pattern {
         return self
     }
 }
 
 extension String: PatternRepresentable {
-    public func convertToPattern() -> Pattern {
+    public var pattern: Pattern {
         return .equal(self)
     }
 }
 
 extension URL: PatternRepresentable {
-    public func convertToPattern() -> Pattern {
+    public var pattern: Pattern {
         return .equal(self.absoluteString)
-    }
-}
-
-extension NSRegularExpression: PatternRepresentable {
-    public func convertToPattern() -> Pattern {
-        return .regexp(self.pattern)
     }
 }

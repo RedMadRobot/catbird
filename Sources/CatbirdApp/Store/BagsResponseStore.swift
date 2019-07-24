@@ -2,5 +2,5 @@ import CatbirdAPI
 
 protocol BagsResponseStore {
  
-    var bags: [RequestPattern : ResponseData] { get }
+    var bags: [RequestBag] { get }
 }

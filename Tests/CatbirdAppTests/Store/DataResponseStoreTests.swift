@@ -59,15 +59,11 @@ final class DataResponseStoreTests: RequestTestCase {
             )
         )
         
-        do {
+        XCTAssertNoThrow(try {
             let result = try store.response(for: request)
             XCTAssertEqual(result.http.status.code, 200)
             XCTAssertEqual(result.http.body.data, Data())
-        } catch is AbortError {
-            XCTFail("Not found pattern for given request")
-        } catch let error {
-            XCTFail("\(error)")
-        }
+        }())
     }
     
     func testResponseForRequest_notMatch() {

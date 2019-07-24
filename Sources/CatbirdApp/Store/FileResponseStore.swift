@@ -25,7 +25,7 @@ final class FileResponseStore: ResponseStore {
         guard let body = data?.body else { return }
         
         let patternPath: String
-        if case .equal(let value) = pattern.url, let url = URL(string: value) {
+        if case .equal = pattern.url.kind, let url = URL(string: pattern.url.value) {
             patternPath = url.path
         } else {
             patternPath = pattern.url.value.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""

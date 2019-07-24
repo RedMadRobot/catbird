@@ -28,8 +28,8 @@ public struct RequestPattern: Codable, Hashable {
     ///   - headerFields: Request required headers. Default empty.
     public init(method: String, url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) {
         self.method = method
-        self.url = url.convertToPattern()
-        self.headerFields = headerFields.mapValues { $0.convertToPattern() }
+        self.url = url.pattern
+        self.headerFields = headerFields.mapValues { $0.pattern }
     }
 
     /// A new pattern for `GET` request.

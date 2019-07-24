@@ -3,12 +3,13 @@ import CatbirdAPI
 extension Pattern {
     
     func match(_ someValue: String) -> Bool {
-        switch self {
-        case .equal(let pattern):
+        let pattern = value
+        switch kind {
+        case .equal:
             return pattern == someValue
-        case .glob(let pattern):
-            return Glob(globPattern: pattern).check(someValue)
-        case .regexp(let pattern):
+        case .glob:
+            return Glob(pattern: pattern).check(someValue)
+        case .regexp:
             return someValue.range(of: pattern , options: [.regularExpression, .caseInsensitive]) != nil
         }
     }

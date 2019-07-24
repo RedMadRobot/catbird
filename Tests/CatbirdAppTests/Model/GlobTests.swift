@@ -5,7 +5,7 @@ import XCTest
 final class GlobTests: XCTestCase {
 
     func match(_ globPattern: String, _ testString: String, globstar: Bool = false) -> Bool {
-        return Glob(globPattern: globPattern, globstar: globstar).check(testString)
+        return Glob(pattern: globPattern, globstar: globstar).check(testString)
     }
     
     // MARK: - Tests

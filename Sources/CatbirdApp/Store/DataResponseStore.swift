@@ -3,14 +3,14 @@ import Vapor
 
 final class DataResponseStore: ResponseStore, BagsResponseStore {
 
-    private(set) var bags: [RequestPattern : ResponseData] = [:]
+    private(set) var bags: [RequestBag] = []
 
     // MARK: - ResponseStore
 
     func response(for request: Request) throws -> Response {
-        for (pattern, response) in bags {
-            if pattern.match(request.http) {
-                return request.response(http: response.httpResponse)
+        for bag in bags {
+            if bag.pattern.match(request.http) {
+                return request.response(http: bag.data.httpResponse)
             }
         }
         throw Abort(.notFound)
@@ -18,7 +18,10 @@ final class DataResponseStore: ResponseStore, BagsResponseStore {
 
     func setResponse(data: ResponseData?, for pattern: RequestPattern) throws {
         guard let data = data else { return }
-        bags[pattern] = data
+        let bag = RequestBag(pattern: pattern, data: data)
+        if !bags.contains(bag) {
+            bags.append(bag)
+        }
     }
 
     func removeAllResponses() throws {
