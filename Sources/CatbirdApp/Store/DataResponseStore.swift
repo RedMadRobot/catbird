@@ -16,7 +16,6 @@ final class DataResponseStore: ResponseStore, BagsResponseStore {
     }
 
     func setResponse(data: ResponseData?, for pattern: RequestPattern) throws {
-        guard let data = data else { return }
         bags[pattern] = data
     }
 
