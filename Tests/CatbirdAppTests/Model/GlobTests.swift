@@ -145,4 +145,14 @@ final class GlobTests: XCTestCase {
                             "http://foo.com/bar/baz/jquery.min.js",
                             globstar: true))
     }
+    
+    func testEscaping() {
+        XCTAssertTrue(match("\\*o", "*o"))
+        XCTAssertFalse(match("\\*o", "foo"))
+        
+        XCTAssertTrue(match("\\?o", "?o"))
+        XCTAssertFalse(match("\\?o", "fo"))
+        
+        XCTAssertTrue(match("\\", "\\"))
+    }
 } 

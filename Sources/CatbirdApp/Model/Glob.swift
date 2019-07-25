@@ -41,6 +41,15 @@ public struct Glob {
             switch char {
             case "/", "$", "^", "+", ".", "(", ")", "=", "!", "|":
                 result.append("\\\(char)")
+            case "\\":
+                // Escaping next character
+                if index + 1 < patternChars.count {
+                    result.append("\\")
+                    result.append(patternChars[index + 1])
+                    index += 1
+                } else {
+                    result.append("\\\\")
+                }
             case "?":
                 result.append(".")
             case "[", "]":
