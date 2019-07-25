@@ -30,12 +30,13 @@ public struct Glob {
     ///
     /// - Returns: Regular expression pattern string
     public func regexPattern() -> String {
+        let patternChars = [Character](pattern)
         var result = ""
         var index = 0
         var inGroup = false
         
-        while index < pattern.count {
-            let char = pattern[index]
+        while index < patternChars.count {
+            let char = patternChars[index]
             
             switch char {
             case "/", "$", "^", "+", ".", "(", ")", "=", "!", "|":
@@ -59,13 +60,13 @@ public struct Glob {
             case "*":
                 // Move over all consecutive "*"'s.
                 // Also store the previous and next characters
-                let prevChar: Character? = index > 0 ? pattern[index - 1] : nil
+                let prevChar: Character? = index > 0 ? patternChars[index - 1] : nil
                 var starCount = 1
-                while(index + 1 < pattern.count && pattern[index + 1] == "*") {
+                while(index + 1 < patternChars.count && patternChars[index + 1] == "*") {
                     starCount += 1
                     index += 1
                 }
-                let nextChar: Character? = index + 1 < pattern.count ? pattern[index + 1] : nil
+                let nextChar: Character? = index + 1 < patternChars.count ? patternChars[index + 1] : nil
                 
                 if !globstar {
                     // globstar is disabled, so treat any number of "*" as one
@@ -112,12 +113,5 @@ public struct Glob {
             options = options.union([.caseInsensitive])
         }
         return testingString.range(of: regexPattern() , options: options) != nil
-    }
-}
-
-private extension String {
-    subscript (index: Int) -> Character {
-        let charIndex = self.index(self.startIndex, offsetBy: index)
-        return self[charIndex]
     }
 }
