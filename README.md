@@ -137,6 +137,42 @@ final class LoginUITests: XCTestCase {
 }
 ```
 
+### Request patterns
+
+You can specify a pattern for catch http requests and make a response with mock data. Pattern matching applied for URL and http headers in the request. See `RequestPattern` struct.
+
+Three types of patterns can be used:
+
+- `equal` - the request value must be exactly the same as the pattern value,
+
+- `glob` - the request value match with the glob (wildcard) pattern,
+- `regexp` - the request value match with the regular expression pattern.
+
+##### Note: 
+If you want to apply a wildcard pattern for the url query parameters, don't forget escape `?` symbol after domain or path.
+
+```swift
+Pettern.glob("http://example.com\?query=*")
+```
+
+### Glob pattern
+
+"Globs" are the patterns you type when you do stuff like `ls *.js` on the command line, or put `build/*` in a `.gitignore` file.
+
+In our implementation any glob pattern translates to regular expression and applies matching with URL or header string.
+
+The following characters have special magic meaning when used in a pattern:
+
+- `*` matches 0 or more characters in a single path portion
+- `?` matches 1 character
+- `[a-z]` matches a range of characters, similar to a RegExp range. 
+- `{bar,baz}` matches one of the substitution listed in braces. For example pattern  `foo{bar,baz}` matches strings `foobar` or `foobaz`
+
+You can escape special characters with backslash `\`.
+
+Negation in groups not supported.
+
+
 ## Example project
 
 ```bash

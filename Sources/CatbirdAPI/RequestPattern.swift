@@ -24,7 +24,7 @@ public struct RequestPattern: Codable, Hashable {
     ///
     /// - Parameters:
     ///   - method: HTTP method.
-    ///   - url: Request URL.
+    ///   - url: Request URL or pattern.
     ///   - headerFields: Request required headers. Default empty.
     public init(method: String, url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) {
         self.method = method

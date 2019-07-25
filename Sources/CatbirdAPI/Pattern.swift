@@ -5,9 +5,9 @@ public struct Pattern: Codable, Hashable {
     
     // MARK: - Public types
     
-    /// - equal: The request value must be equal pattern value
-    /// - glob: The request value match with glob pattern
-    /// - regexp: The request value match with regular expression pattern
+    /// - equal: The request value must be equal to the pattern value
+    /// - glob: The request value match with the glob pattern
+    /// - regexp: The request value match with the regular expression pattern
     public enum Kind: String, Codable {
         case equal, glob, regexp
     }
