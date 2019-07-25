@@ -17,7 +17,10 @@ final class DataResponseStore: ResponseStore, BagsResponseStore {
     }
 
     func setResponse(data: ResponseData?, for pattern: RequestPattern) throws {
-        guard let data = data else { return }
+        guard let data = data else { 
+            bags = bags.filter { $0.pattern != pattern }
+            return
+        }
         let bag = RequestBag(pattern: pattern, data: data)
         if !bags.contains(bag) {
             bags.append(bag)
