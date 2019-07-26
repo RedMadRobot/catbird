@@ -25,7 +25,7 @@ final class DataResponseStoreTests: RequestTestCase {
         let pattern1 = RequestPattern.get(Pattern.equal("/login"), headerFields: [:])
         try! store.setResponse(data: data, for: pattern1)
         
-        let pattern2 = RequestPattern.get(Pattern.glob("/login"), headerFields: [:])
+        let pattern2 = RequestPattern.get(Pattern.wildcard("/login"), headerFields: [:])
         try! store.setResponse(data: data, for: pattern2)
         
         let pattern3 = RequestPattern.get(Pattern.regexp("/login"), headerFields: [:])

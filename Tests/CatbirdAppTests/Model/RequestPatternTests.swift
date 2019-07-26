@@ -57,8 +57,8 @@ final class RequestPatternTests: RequestTestCase {
         XCTAssertFalse(pattern.match(httpRequest2))
     }
     
-    func testMatchByUrlWithGlob() {
-        let pattern = RequestPattern.get(Pattern.glob("http://foo.com/*.txt"))
+    func testMatchByUrlWithWildcard() {
+        let pattern = RequestPattern.get(Pattern.wildcard("http://foo.com/*.txt"))
         let httpRequest1 = HTTPRequest(method: HTTPMethod.GET, url: "http://foo.com/readme.txt")
         XCTAssertTrue(pattern.match(httpRequest1))
         

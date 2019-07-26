@@ -5,7 +5,7 @@ final class PatternTests: XCTestCase {
     
     enum Samples: String {
         case equalJson = #"{"kind":"equal","value":"some"}"#
-        case globJson = #"{"kind":"glob","value":"some*"}"#
+        case wildcardJson = #"{"kind":"wildcard","value":"some*"}"#
         case regexpJson = #"{"kind":"regexp","value":"^some$"}"#
     }
     
@@ -15,10 +15,10 @@ final class PatternTests: XCTestCase {
         XCTAssertEqual(String(data: data, encoding: .utf8), Samples.equalJson.rawValue)
     }
     
-    func testEncodingGlob() {
-        let pattern = Pattern.glob("some*")
+    func testEncodingWildcard() {
+        let pattern = Pattern.wildcard("some*")
         let data = try! JSONEncoder().encode(pattern)
-        XCTAssertEqual(String(data: data, encoding: .utf8), Samples.globJson.rawValue)
+        XCTAssertEqual(String(data: data, encoding: .utf8), Samples.wildcardJson.rawValue)
     }
     
     func testEncodingRegexp() {
@@ -34,10 +34,10 @@ final class PatternTests: XCTestCase {
         XCTAssertEqual(pattern, reference)
     }
     
-    func testDecodingGlob() {
-        let data = Samples.globJson.rawValue.data(using: .utf8)!
+    func testDecodingWildcard() {
+        let data = Samples.wildcardJson.rawValue.data(using: .utf8)!
         let pattern = try! JSONDecoder().decode(Pattern.self, from: data)
-        let reference = Pattern.glob("some*")
+        let reference = Pattern.wildcard("some*")
         XCTAssertEqual(pattern, reference)
     }
     

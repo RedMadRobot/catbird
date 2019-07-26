@@ -7,8 +7,8 @@ extension Pattern {
         switch kind {
         case .equal:
             return pattern == someValue
-        case .glob:
-            return Glob(pattern: pattern).check(someValue)
+        case .wildcard:
+            return Wildcard(pattern: pattern).check(someValue)
         case .regexp:
             return someValue.range(of: pattern , options: [.regularExpression, .caseInsensitive]) != nil
         }

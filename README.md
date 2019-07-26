@@ -144,22 +144,21 @@ You can specify a pattern for catch http requests and make a response with mock 
 Three types of patterns can be used:
 
 - `equal` - the request value must be exactly the same as the pattern value,
-
-- `glob` - the request value match with the glob (wildcard) pattern,
+- `wildcard` - the request value match with the wildcard pattern (see below),
 - `regexp` - the request value match with the regular expression pattern.
 
 ##### Note: 
 If you want to apply a wildcard pattern for the url query parameters, don't forget escape `?` symbol after domain or path.
 
 ```swift
-Pettern.glob("http://example.com\?query=*")
+Pettern.wildcard("http://example.com\?query=*")
 ```
 
-### Glob pattern
+### Wildcard pattern
 
-"Globs" are the patterns you type when you do stuff like `ls *.js` on the command line, or put `build/*` in a `.gitignore` file.
+"Wildcards" are the patterns you type when you do stuff like `ls *.js` on the command line, or put `build/*` in a `.gitignore` file.
 
-In our implementation any glob pattern translates to regular expression and applies matching with URL or header string.
+In our implementation any wildcard pattern translates to regular expression and applies matching with URL or header string.
 
 The following characters have special magic meaning when used in a pattern:
 

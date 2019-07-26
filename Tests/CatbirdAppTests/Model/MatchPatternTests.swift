@@ -15,15 +15,15 @@ final class MatchPatternTests: XCTestCase {
         XCTAssertTrue(pattern3.match("^some.string$"))
     }
     
-    func testMatchGlob() {
-        let pattern1 = Pattern.glob("some?string")
+    func testMatchWildcard() {
+        let pattern1 = Pattern.wildcard("some?string")
         XCTAssertTrue(pattern1.match("some string"))
         XCTAssertTrue(pattern1.match("some_string"))
         XCTAssertTrue(pattern1.match("some-string"))
         XCTAssertFalse(pattern1.match("somestring"))
         XCTAssertFalse(pattern1.match("something"))
         
-        let pattern2 = Pattern.glob("foo{bar,baz}")
+        let pattern2 = Pattern.wildcard("foo{bar,baz}")
         XCTAssertTrue(pattern2.match("foobar"))
         XCTAssertTrue(pattern2.match("foobaz"))
         XCTAssertFalse(pattern2.match("foobuz"))

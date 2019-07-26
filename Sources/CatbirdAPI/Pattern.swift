@@ -6,10 +6,10 @@ public struct Pattern: Codable, Hashable {
     // MARK: - Public types
     
     /// - equal: The request value must be equal to the pattern value
-    /// - glob: The request value match with the glob pattern
+    /// - wildcard: The request value match with the wildcard pattern
     /// - regexp: The request value match with the regular expression pattern
     public enum Kind: String, Codable {
-        case equal, glob, regexp
+        case equal, wildcard, regexp
     }
     
     
@@ -30,8 +30,8 @@ public struct Pattern: Codable, Hashable {
         return Pattern(kind: .equal, value: value)
     }
     
-    public static func glob(_ value: String) -> Pattern {
-        return Pattern(kind: .glob, value: value)
+    public static func wildcard(_ value: String) -> Pattern {
+        return Pattern(kind: .wildcard, value: value)
     }
     
     public static func regexp(_ value: String) -> Pattern {
