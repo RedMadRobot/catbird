@@ -1,5 +1,11 @@
 # Catbird
 
+[![Build Status](https://travis-ci.com/RedMadRobot/catbird.svg?branch=master)](https://travis-ci.com/RedMadRobot/catbird)
+[![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/RedMadRobot/Catbird/blob/master/LICENSE)
+[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Catbird.svg)](https://cocoapods.org/pods/Catbird)
+[![Platform](https://img.shields.io/cocoapods/p/Catbird.svg?style=flat)](https://cocoapods.org/pods/Catbird)
+[![SPM compatible](https://img.shields.io/badge/spm-compatible-brightgreen.svg?style=flat)](https://swift.org/package-manager)
+
 > Catbird | Drozd | Дрозд
 
 Mock server for ui tests
