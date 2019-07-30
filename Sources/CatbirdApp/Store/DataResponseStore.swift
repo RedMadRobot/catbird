@@ -8,10 +8,8 @@ final class DataResponseStore: ResponseStore, BagsResponseStore {
     // MARK: - ResponseStore
 
     func response(for request: Request) throws -> Response {
-        for bag in bags {
-            if bag.pattern.match(request.http) {
-                return request.response(http: bag.data.httpResponse)
-            }
+        for bag in bags where bag.pattern.match(request.http) {
+            return request.response(http: bag.data.httpResponse)
         }
         throw Abort(.notFound)
     }
@@ -22,7 +20,9 @@ final class DataResponseStore: ResponseStore, BagsResponseStore {
             return
         }
         let bag = RequestBag(pattern: pattern, data: data)
-        if !bags.contains(bag) {
+        if let index = bags.firstIndex(where: { $0.pattern == pattern }) {
+            bags[index] = bag
+        } else {
             bags.append(bag)
         }
     }

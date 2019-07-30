@@ -16,6 +16,27 @@ final class DataResponseStoreTests: RequestTestCase {
         
         try! store.setResponse(data: data, for: pattern)
         XCTAssertEqual(store.bags.count, 1)
+        
+        // Remove by setting nil
+        try! store.setResponse(data: nil, for: pattern)
+        XCTAssertEqual(store.bags.count, 0)
+    }
+    
+    func testSetResponse_replace() {
+        let store = DataResponseStore()
+        let data1 = ResponseData(statusCode: 200, headerFields: [:], body: nil)
+        let data2 = ResponseData(statusCode: 400, headerFields: [:], body: nil)
+        XCTAssertNotEqual(data1, data2)
+        let pattern = RequestPattern.get("/login", headerFields: [:])
+        
+        try! store.setResponse(data: data1, for: pattern)
+        XCTAssertEqual(store.bags.count, 1)
+        XCTAssertEqual(store.bags.first!.data, data1)
+        
+        // Check data override
+        try! store.setResponse(data: data2, for: pattern)
+        XCTAssertEqual(store.bags.count, 1)
+        XCTAssertEqual(store.bags.first!.data, data2)
     }
     
     func testSetResponseForDifferentUrlPattern() {

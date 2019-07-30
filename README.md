@@ -157,7 +157,7 @@ Three types of patterns can be used:
 If you want to apply a wildcard pattern for the url query parameters, don't forget escape `?` symbol after domain or path.
 
 ```swift
-Pettern.wildcard("http://example.com\?query=*")
+Pattern.wildcard("http://example.com\?query=*")
 ```
 
 ### Wildcard pattern
@@ -175,7 +175,7 @@ The following characters have special magic meaning when used in a pattern:
 
 You can escape special characters with backslash `\`.
 
-Negation in groups not supported.
+Negation in groups is not supported.
 
 
 ## Example project
