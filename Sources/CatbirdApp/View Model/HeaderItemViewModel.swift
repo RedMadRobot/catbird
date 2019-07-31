@@ -1,7 +1,14 @@
+import CatbirdAPI
+
 struct HeaderItemViewModel: Encodable, Comparable {
     
     let key: String
     let value: String
+    
+    init(_ item: Dictionary<String, Pattern>.Element) {
+        key = item.key
+        value = item.value.value
+    }
     
     init(_ item: Dictionary<String, String>.Element) {
         key = item.key

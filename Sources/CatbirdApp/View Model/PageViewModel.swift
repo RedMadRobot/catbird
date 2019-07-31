@@ -4,10 +4,10 @@ struct PageViewModel: Encodable {
     
     let patterns: [PatternViewModel]
     
-    init(bags: [RequestPattern : ResponseData]) {
+    init(bags: [RequestBag]) {
         var patterns = [PatternViewModel]()
         for (index, bag) in bags.enumerated() {
-            patterns.append(PatternViewModel(id: index, request: bag.key, response: bag.value))
+            patterns.append(PatternViewModel(id: index, request: bag.pattern, response: bag.data))
         }
         self.patterns = patterns
     }
