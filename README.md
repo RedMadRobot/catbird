@@ -168,7 +168,7 @@ In our implementation any wildcard pattern translates to regular expression and 
 
 The following characters have special magic meaning when used in a pattern:
 
-- `*` matches 0 or more characters in a single path portion
+- `*` matches 0 or more characters
 - `?` matches 1 character
 - `[a-z]` matches a range of characters, similar to a RegExp range. 
 - `{bar,baz}` matches one of the substitution listed in braces. For example pattern  `foo{bar,baz}` matches strings `foobar` or `foobaz`
