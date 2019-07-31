@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name           = 'Catbird'
-  s.version        = '0.0.9'
+  s.version        = '0.5.0'
   s.summary        = 'Mock server for UI tests'
   s.homepage       = 'https://github.com/RedMadRobot/catbird'
   s.license        = { type: 'MIT', file: 'LICENSE' }
