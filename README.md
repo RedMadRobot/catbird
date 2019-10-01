@@ -186,6 +186,12 @@ $ bundle exec pod install
 $ xed .
 ```
 
+## Environment variables
+
+`CATBIRD_MOCKS_DIR` — Directory where static mocks are located.
+
+`CATBIRD_PROXY_URL` — If you specify this URL Catbird will run in write mode. In this mode, requests to Catbird will be redirected to the `CATBIRD_PROXY_URL`. Upon receipt of response from the server it will be written to the `CATBIRD_MOCKS_DIR` directory.
+
 ## Logs
 
 Logs can be viewed in the `Console.app` with subsystem `com.redmadrobot.catbird`
