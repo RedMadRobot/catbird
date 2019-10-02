@@ -100,7 +100,7 @@ enum LoginMock: RequestBagConvertible {
 }
 
 final class LoginUITests: XCTestCase {
-
+    
     private let catbird = Catbird()
     private var app: XCUIApplication!
 
@@ -110,8 +110,7 @@ final class LoginUITests: XCTestCase {
         app = XCUIApplication()
 
         // Base URL in app `UserDefaults.standard.url(forKey: "url_key")`
-        let url = catbird.url.appendingPathComponent("api")
-        app.launchArguments = ["-url_key", url.absoluteString]
+        app.launchArguments = ["-url_key", catbird.url.absoluteString]
         app.launch()
     }
 
@@ -123,23 +122,34 @@ final class LoginUITests: XCTestCase {
     func testLogin() {
         XCTAssertNoThrow(try catbird.send(.add(LoginMock.success)))
 
+        app.textFields["login"].tap()
         app.textFields["login"].typeText("john@example.com")
+        app.secureTextFields["password"].tap()
         app.secureTextFields["password"].typeText("qwerty")
         app.buttons["Done"].tap()
 
-        XCTAssertTrue(app.staticTexts["Main Screen"].exists)
+        wait(forElement: app.staticTexts["Main Screen"])
     }
 
     func testBlockedUserError() {
         XCTAssertNoThrow(try catbird.send(.add(LoginMock.blockedUserError)))
 
+        app.textFields["login"].tap()
         app.textFields["login"].typeText("peter@example.com")
+        app.secureTextFields["password"].tap()
         app.secureTextFields["password"].typeText("burger")
         app.buttons["Done"].tap()
 
-        XCTAssertTrue(app.alerts["Error"].exists)
+        wait(forElement: app.alerts["Error"])
     }
+}
 
+extension XCTestCase {
+    func wait(forElement element: XCUIElement, timeout: TimeInterval = 3.0) {
+        let predicate = NSPredicate(format: "exists == 1")
+        expectation(for: predicate, evaluatedWith: element)
+        waitForExpectations(timeout: timeout)
+    }
 }
 ```
 
