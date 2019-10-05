@@ -1,0 +1,4 @@
+[submodule "swift-format"]
+	path = swift-format
+	url = https://github.com/apple/swift-format.git
+	branch = swift-5.1-branch

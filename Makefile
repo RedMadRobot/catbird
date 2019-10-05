@@ -16,3 +16,6 @@ clean:
 
 lint:
 	pod spec lint
+
+format:
+	swift run --package-path ./swift-format -c release swift-format --mode format --in-place --recursive ./Sources --configuration ./.swift-format.json
