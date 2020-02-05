@@ -13,6 +13,7 @@ public final class Catbird {
     public static var session: URLSession {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.timeoutIntervalForRequest = 5
+        configuration.httpAdditionalHeaders = [sessionId: UUID().uuidString]
         let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: .main)
         session.sessionDescription = "Catbird session"
         return session

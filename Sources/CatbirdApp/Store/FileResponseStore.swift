@@ -35,7 +35,7 @@ final class FileResponseStore: ResponseStore {
         try body.write(to: url)
     }
 
-    func removeAllResponses() throws {}
+    func removeAllResponses(for request: Request) throws {}
 
     // MARK: - Private
 
