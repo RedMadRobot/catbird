@@ -12,13 +12,13 @@ public struct RequestPattern: Codable, Hashable {
     }
     
     /// HTTP method.
-    public let method: String
+    public var method: String
 
     /// Request URL.
-    public let url: Pattern
+    public var url: Pattern
 
     /// Request required headers. Default empty.
-    public let headerFields: [String: Pattern]
+    public var headerFields: [String: Pattern]
 
     /// A new request pattern.
     ///

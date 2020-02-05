@@ -23,7 +23,10 @@ final class APIController: RouteCollection {
     // MARK: - Action
 
     func create(_ request: Request, bag: RequestBag) throws -> HTTPStatus {
-        try store.setResponse(data: bag.data, for: bag.pattern)
+        var pattern = bag.pattern
+        let sessionId = request.http.headers[Catbird.sessionId].first
+        pattern.headerFields[Catbird.sessionId] = sessionId.map(Pattern.equal)
+        try store.setResponse(data: bag.data, for: pattern)
         return HTTPStatus.created
     }
 
@@ -37,7 +40,7 @@ final class APIController: RouteCollection {
     }
 
     func clear(_ request: Request) throws -> HTTPStatus {
-        try store.removeAllResponses()
+        try store.removeAllResponses(for: request)
         return HTTPStatus.noContent
     }
 

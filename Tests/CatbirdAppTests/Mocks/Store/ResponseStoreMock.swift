@@ -35,7 +35,7 @@ final class ResponseStoreMock: ResponseStore {
         fatalError()
     }
 
-    func removeAllResponses() throws {
+    func removeAllResponses(for request: Request) throws {
         responses.removeAll()
     }
 }

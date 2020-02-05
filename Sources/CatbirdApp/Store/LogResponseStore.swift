@@ -23,9 +23,9 @@ final class LogResponseStore: ResponseStore {
         try store.setResponse(data: data, for: pattern)
     }
 
-    func removeAllResponses() throws {
+    func removeAllResponses(for request: Request) throws {
         logger.debug("remove all responses")
-        try store.removeAllResponses()
+        try store.removeAllResponses(for: request)
     }
 
 }

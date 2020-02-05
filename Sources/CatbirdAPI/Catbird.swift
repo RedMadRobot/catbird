@@ -6,10 +6,14 @@ public final class Catbird {
     /// Localhost IPv4 representation.
     public static let localhost = URL(string: "http://127.0.0.1:8080")!
 
+    /// Session ID header name.
+    public static let sessionId = "X-Catbird-Session-Id"
+
     /// Default network session.
     public static var session: URLSession {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.timeoutIntervalForRequest = 5
+        configuration.httpAdditionalHeaders = [sessionId: UUID().uuidString]
         let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: .main)
         session.sessionDescription = "Catbird session"
         return session
