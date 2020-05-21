@@ -3,47 +3,49 @@ import XCTest
 
 final class PatternTests: XCTestCase {
     
-    enum Samples: String {
-        case equalJson = #"{"kind":"equal","value":"some"}"#
-        case wildcardJson = #"{"kind":"wildcard","value":"some*"}"#
-        case regexpJson = #"{"kind":"regexp","value":"^some$"}"#
+    private enum JSONs: String {
+        case equal = #"{"kind":"equal","value":"some"}"#
+        case wildcard = #"{"kind":"wildcard","value":"some*"}"#
+        case regexp = #"{"kind":"regexp","value":"^some$"}"#
+
+        var data: Data { Data(rawValue.utf8) }
     }
     
-    func testEncodingEqual() {
+    func testEncodingEqual() throws {
         let pattern = Pattern.equal("some")
-        let data = try! JSONEncoder().encode(pattern)
-        XCTAssertEqual(String(data: data, encoding: .utf8), Samples.equalJson.rawValue)
+        let data = try JSONEncoder().encode(pattern)
+        XCTAssertEqual(String(data: data, encoding: .utf8), JSONs.equal.rawValue)
     }
     
-    func testEncodingWildcard() {
+    func testEncodingWildcard() throws {
         let pattern = Pattern.wildcard("some*")
-        let data = try! JSONEncoder().encode(pattern)
-        XCTAssertEqual(String(data: data, encoding: .utf8), Samples.wildcardJson.rawValue)
+        let data = try JSONEncoder().encode(pattern)
+        XCTAssertEqual(String(data: data, encoding: .utf8), JSONs.wildcard.rawValue)
     }
     
-    func testEncodingRegexp() {
+    func testEncodingRegexp() throws {
         let pattern = Pattern.regexp("^some$")
-        let data = try! JSONEncoder().encode(pattern)
-        XCTAssertEqual(String(data: data, encoding: .utf8), Samples.regexpJson.rawValue)
+        let data = try JSONEncoder().encode(pattern)
+        XCTAssertEqual(String(data: data, encoding: .utf8), JSONs.regexp.rawValue)
     }
     
-    func testDecodingEqual() {
-        let data = Samples.equalJson.rawValue.data(using: .utf8)!
-        let pattern = try! JSONDecoder().decode(Pattern.self, from: data)
+    func testDecodingEqual() throws {
+        let data = JSONs.equal.data
+        let pattern = try JSONDecoder().decode(Pattern.self, from: data)
         let reference = Pattern.equal("some")
         XCTAssertEqual(pattern, reference)
     }
     
-    func testDecodingWildcard() {
-        let data = Samples.wildcardJson.rawValue.data(using: .utf8)!
-        let pattern = try! JSONDecoder().decode(Pattern.self, from: data)
+    func testDecodingWildcard() throws {
+        let data = JSONs.wildcard.data
+        let pattern = try JSONDecoder().decode(Pattern.self, from: data)
         let reference = Pattern.wildcard("some*")
         XCTAssertEqual(pattern, reference)
     }
     
-    func testDecodingRegexp() {
-        let data = Samples.regexpJson.rawValue.data(using: .utf8)!
-        let pattern = try! JSONDecoder().decode(Pattern.self, from: data)
+    func testDecodingRegexp() throws {
+        let data = JSONs.regexp.data
+        let pattern = try JSONDecoder().decode(Pattern.self, from: data)
         let reference = Pattern.regexp("^some$")
         XCTAssertEqual(pattern, reference)
     }

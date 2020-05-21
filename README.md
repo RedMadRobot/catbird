@@ -1,6 +1,5 @@
 ![](Resources/header.svg)
 # Catbird
-> Catbird | Drozd | Дрозд
 
 [![Build Status](https://travis-ci.com/RedMadRobot/catbird.svg?branch=master)](https://travis-ci.com/RedMadRobot/catbird)
 [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/RedMadRobot/Catbird/blob/master/LICENSE)

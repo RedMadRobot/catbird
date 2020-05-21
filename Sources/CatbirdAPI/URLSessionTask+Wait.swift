@@ -1,6 +1,6 @@
 import Foundation
 
-internal extension URLSessionTask {
+extension URLSessionTask {
 
     /// Wait until task completed.
     func wait() {
