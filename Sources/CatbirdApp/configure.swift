@@ -41,9 +41,9 @@ public func configure(_ app: Application, _ configuration: AppConfiguration) thr
     case .read:
         app.logger.info("Read mode")
         // try read from static mocks if route not found
-        app.middleware.use(AnyMiddleware.notFound { fileStore.response(for: $0) })
+        app.middleware.use(AnyMiddleware.notFound(fileStore.response))
         // try read from dynamic mocks
-        app.middleware.use(AnyMiddleware.notFound { inMemoryStore.response(for: $0) })
+        app.middleware.use(AnyMiddleware.notFound(inMemoryStore.response))
     case .write(let url):
         app.logger.info("Write mode")
         // redirect request to another server
@@ -75,55 +75,3 @@ public func configure(_ app: Application, _ configuration: AppConfiguration) thr
         }
     }
 }
-
-/// Called before your application initializes.
-//public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
-//    // Register logger
-//    let logger = SystemLogger.default
-//    services.register(logger, as: Logger.self)
-//    config.prefer(SystemLogger.self, for: Logger.self)
-//
-//    let appConfig = try AppConfiguration.detect()
-//
-//    let fileStore = LogResponseStore(
-//        store: FileResponseStore(path: appConfig.mocksDirectory),
-//        logger: SystemLogger.category("File"))
-//
-//    let dataResponseStore = DataResponseStore()
-//    let dataStore = LogResponseStore(
-//        store: dataResponseStore,
-//        logger: SystemLogger.category("Data"))
-//
-//    // Register routes to the router
-//    let router = EngineRouter.default()
-//    try routes(router)
-//    let apiController = APIController(store: dataStore)
-//    try router.register(collection: apiController)
-//    let webController = WebController(store: dataResponseStore)
-//    try router.register(collection: webController)
-//    services.register(router, as: Router.self)
-//
-//    // Register middleware
-//    var middlewares = MiddlewareConfig() // Create _empty_ middleware config
-//    middlewares.use(ErrorMiddleware.self) // Catches errors and converts to HTTP response
-//    middlewares.use(FileMiddleware.self) // Serves static files from a public directory.
-//
-//    switch appConfig.mode {
-//    case .write(let url):
-//        services.register { ProxyMiddleware(baseURL: url, logger: try $0.make()) }
-//        middlewares.use(ResponseWriterMiddleware(store: fileStore))
-//        middlewares.use(ProxyMiddleware.self)
-//        logger.info("Write mode")
-//    case .read:
-//        middlewares.use(ResponseReaderMiddleware(store: fileStore))
-//        middlewares.use(ResponseReaderMiddleware(store: dataStore))
-//        logger.info("Read mode")
-//    }
-//
-//    services.register(middlewares)
-//
-//    // Register view renderer
-//    let leafProvider = LeafProvider()
-//    try services.register(leafProvider)
-//    config.prefer(LeafRenderer.self, for: ViewRenderer.self)
-//}

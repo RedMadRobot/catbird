@@ -5,38 +5,58 @@ import XCTVapor
 final class AppTests: AppTestCase {
 
     func testStaticMock() throws {
-        try app.test(.GET, "/Hello") { response in
+        try app.test(.GET, "/api/books/1") { response in
             XCTAssertEqual(response.status.code, 200)
-            XCTAssertEqual(response.body.string, "Hello from static file")
+            XCTAssertEqual(response.body.string, "first book\n")
         }
     }
 
     func testAddMock() throws {
         // Given
         let mock = ResponseMock(status: 300, headers: ["X": "Y"], body: Data("hello".utf8))
-        let pattern = RequestPattern(method: .GET, url: "/api/books", headers: ["X-Test": "1"])
+        let pattern = RequestPattern(method: .GET, url: "/books", headers: ["X-Test": "1"])
 
         // When
         try app.perform(.update(pattern, mock))
 
         // Then
-        try app.test(.GET, "api/books") { response in
+        try app.test(.GET, "/books") { response in
             XCTAssertEqual(response.status, .notFound, "Missing header")
         }
-        try app.test(.POST, "api/books") { response in
+        try app.test(.POST, "/books") { response in
             XCTAssertEqual(response.status, .notFound, "Not correct method")
         }
-        try app.test(.GET, "api/books", headers: ["X-Test": "1"]) { response in
+        try app.test(.GET, "/books", headers: ["X-Test": "1"]) { response in
             XCTAssertEqual(response.status.code, 300)
             XCTAssertEqual(response.headers.first(name: "X"), "Y")
             XCTAssertEqual(response.body.string, "hello")
         }
     }
 
+    func testAddMockOverStaticFile() throws {
+        // Given
+        let mock = ResponseMock(status: 200, body: Data("dynamic mock".utf8))
+        let pattern = RequestPattern(method: .GET, url: "/api/books/1")
+
+        try app.test(.GET, "/api/books/1") { response in
+            XCTAssertEqual(response.status.code, 200)
+            XCTAssertEqual(response.body.string, "first book\n")
+        }
+
+        // When
+        try app.perform(.update(pattern, mock))
+
+        // Then
+        try app.test(.GET, "/api/books/1") { response in
+            XCTAssertEqual(response.status.code, 200)
+            XCTAssertEqual(response.body.string, "dynamic mock")
+        }
+    }
+
     func testUpdateMock() throws {
         // Given
         var mock = ResponseMock(status: 200, body: Data("first".utf8))
-        let pattern = RequestPattern(method: .GET, url: "/books")
+        let pattern = RequestPattern(method: .GET, url: "/books/2")
         try app.perform(.update(pattern, mock))
 
         // When
@@ -44,7 +64,7 @@ final class AppTests: AppTestCase {
         try app.perform(.update(pattern, mock))
 
         // Then
-        try app.test(.GET, "/books", headers: ["X-Test": "1"]) { response in
+        try app.test(.GET, "/books/2", headers: ["X-Test": "1"]) { response in
             XCTAssertEqual(response.status.code, 200)
             XCTAssertEqual(response.body.string, "second", "Updated body")
         }

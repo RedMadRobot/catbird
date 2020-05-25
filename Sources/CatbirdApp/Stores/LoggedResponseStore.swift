@@ -22,9 +22,9 @@ final class LoggedResponseStore: ResponseStore {
     func perform(_ action: CatbirdAction, for request: Request) -> EventLoopFuture<Response> {
         switch action {
         case .update(let pattern, .some):
-            logger.info("write at url: \(pattern.url)")
+            logger.info("write at url: \(pattern.url.value)")
         case .update(let pattern, .none):
-            logger.info("remove at url: \(pattern.url)")
+            logger.info("remove at url: \(pattern.url.value)")
         case .removeAll:
             logger.info("remove all responses")
         }
