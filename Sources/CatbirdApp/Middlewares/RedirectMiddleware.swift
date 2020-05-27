@@ -2,22 +2,22 @@ import Vapor
 
 final class RedirectMiddleware: Middleware {
 
-    private let serverURL: URL
+    private let redirectURI: URI
 
     init(serverURL: URL) {
-        self.serverURL = serverURL
+        self.redirectURI = URI(string: serverURL.absoluteString)
     }
 
     // MARK: - Middleware
 
     func respond(to request: Request, chainingTo next: Responder) -> EventLoopFuture<Response> {
-        // TODO: request.http.urlString = baseURL.absoluteString + request.http.urlString
-
-        let clientRequest = ClientRequest(
+        var clientRequest = ClientRequest(
             method: request.method,
-            url: request.url,
+            url: redirectURI,
             headers: request.headers,
             body: request.body.data)
+
+        clientRequest.url.string += request.url.string
 
         return request
             .client

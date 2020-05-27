@@ -4,10 +4,42 @@ import XCTVapor
 
 final class AppTests: AppTestCase {
 
-    func testStaticMock() throws {
+    func testReadFileMock() throws {
         try app.test(.GET, "/api/books/1") { response in
             XCTAssertEqual(response.status.code, 200)
             XCTAssertEqual(response.body.string, "first book\n")
+        }
+    }
+
+    func testWriteFileMock() throws {
+        // Given
+        let api = JokeAPI()
+        XCTAssertNoThrow(try setUpApp(mode: .write(api.host)), """
+        Launch the app in redirect mode to \(api.host) and write files to a folder \(mocksDirectory)
+        """)
+        addTeardownBlock {
+            let path = self.mocksDirectory + api.root
+            XCTAssertNotNil(try? FileManager.default.removeItem(atPath: path), """
+            Remove created files and directories at \(path)
+            """)
+        }
+
+        // When
+        for joke in api.jokes {
+            try app.test(.GET, joke.path, headers: api.headers) { response in
+                XCTAssertEqual(response.status.code, 200)
+                XCTAssertEqual(response.body.string, joke.text, """
+                Returned the joke by index \(joke.id)
+                """)
+            }
+        }
+
+        // Then
+        for joke in api.jokes {
+            let path = mocksDirectory + joke.path
+            XCTAssertEqual(try String(contentsOfFile: path), joke.text, """
+            The joke by \(joke.id) was saved to a file at path \(path)
+            """)
         }
     }
 

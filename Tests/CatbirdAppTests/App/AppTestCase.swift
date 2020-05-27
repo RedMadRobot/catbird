@@ -1,20 +1,28 @@
 @testable import CatbirdApp
 import XCTVapor
 
-class AppTestCase: XCTVaporTests {
+class AppTestCase: XCTestCase {
 
-    class var config: AppConfiguration {
-        let mocks = URL(string: AppConfiguration.sourceDir + "/Tests/CatbirdAppTests/Files")!
-        return AppConfiguration(mode: .read, mocksDirectory: mocks)
+    let mocksDirectory = AppConfiguration.sourceDir + "/Tests/CatbirdAppTests/Files"
+
+    private(set) var app: Application! {
+        willSet { app?.shutdown() }
     }
 
-    override class func setUp() {
+    func setUpApp(mode: AppConfiguration.Mode) throws {
+        let config = AppConfiguration(mode: mode, mocksDirectory: URL(string: mocksDirectory)!)
+        app = Application(.testing)
+        try configure(app, config)
+    }
+
+    override func setUp() {
         super.setUp()
-        XCTVapor.app = {
-            let app = Application(.testing)
-            try configure(app, config)
-            return app
-        }
+        XCTAssertNoThrow(try setUpApp(mode: .read))
+    }
+
+    override func tearDown() {
+        app = nil
+        super.tearDown()
     }
 }
 

@@ -46,14 +46,14 @@ public func configure(_ app: Application, _ configuration: AppConfiguration) thr
         app.middleware.use(AnyMiddleware.notFound(inMemoryStore.response))
     case .write(let url):
         app.logger.info("Write mode")
-        // redirect request to another server
-        app.middleware.use(RedirectMiddleware(serverURL: url))
         // capture response and write to file
         app.middleware.use(AnyMiddleware.capture { request, response in
             let pattern = RequestPattern(method: .init(request.method.rawValue), url: request.url.string)
             let mock = ResponseMock(status: Int(response.status.code), body: response.body.data)
-            return fileStore.perform(.update(pattern, mock), for: request)
+            return fileStore.perform(.update(pattern, mock), for: request).map { _ in response }
         })
+        // redirect request to another server
+        app.middleware.use(RedirectMiddleware(serverURL: url))
     }
 
     // MARK: - Register Routes

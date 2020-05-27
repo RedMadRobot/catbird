@@ -1,50 +1,6 @@
 import CatbirdAPI
 import Vapor
-
-//final class FileResponseStore: ResponseStore {
-//
-//    /// The directory for response files.
-//    private let path: String
-//
-//    private let fileManager: FileManager
-//
-//    init(path: String, fileManager: FileManager = .default) {
-//        self.path = path
-//        self.fileManager = fileManager
-//    }
-//
-//    // MARK: - ResponseStore
-//
-//    func response(for request: Request) throws -> Response {
-//        let url = URL(fileURLWithPath: path + request.http.url.path, isDirectory: false)
-//        let data = try Data(contentsOf: url)
-//        return request.response(data)
-//    }
-//
-//    func setResponse(data: ResponseData?, for pattern: RequestPattern) throws {
-//        guard let body = data?.body else { return }
-//        
-//        let patternPath: String
-//        if case .equal = pattern.url.kind, let url = URL(string: pattern.url.value) {
-//            patternPath = url.path
-//        } else {
-//            patternPath = pattern.url.value.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-//        }
-//        let url = URL(fileURLWithPath: path + patternPath, isDirectory: false)
-//        try createDirectories(for: url)
-//        try body.write(to: url)
-//    }
-//
-//    func removeAllResponses() throws {}
-//
-//    // MARK: - Private
-//
-//    private func createDirectories(for url: URL) throws {
-//        // Remove file name
-//        let dirUrl = url.deletingLastPathComponent()
-//        try fileManager.createDirectory(at: dirUrl, withIntermediateDirectories: true)
-//    }
-//}
+import NIO
 
 final class FileResponseStore: ResponseStore {
     /// Path to the response body folder.
@@ -61,7 +17,7 @@ final class FileResponseStore: ResponseStore {
     var items: [ResponseStoreItem] { [] }
 
     func response(for request: Request) -> EventLoopFuture<Response> {
-        let path = self.path(request)
+        let path = filePath(for: request)
         guard fileManger.fileExists(atPath: path) else {
             return request.eventLoop.makeFailedFuture(Abort(.notFound))
         }
@@ -70,23 +26,44 @@ final class FileResponseStore: ResponseStore {
     }
 
     func perform(_ action: CatbirdAction, for request: Request) -> EventLoopFuture<Response> {
-        guard case .update(_, let response?) = action else {
-            return request.eventLoop.makeSucceededFuture(Response(status: .forbidden))
+        let eventLoop = request.eventLoop
+        guard case .update(_, let response?) = action, let body = response.body, !body.isEmpty else {
+            return eventLoop.makeSucceededFuture(Response(status: .badRequest))
         }
-        return request.eventLoop.makeSucceededFuture(Response(status: .notImplemented))
+        let path = filePath(for: request)
+        do {
+            try createDirectories(for: path)
+        } catch {
+            return eventLoop.makeFailedFuture(error)
+        }
+        return writeFile(data: body, at: path, request: request)
+            .map { _ in Response(status: .created) }
     }
 
     // MARK: - Private
 
-    private func path(_ request: Request) -> String {
+    private func filePath(for request: Request) -> String {
         return directory.absoluteString + request.url.path
     }
 
-    private func createDirectories(_ url: URL) throws {
+    private func createDirectories(for filePath: String) throws {
+        let url = URL(fileURLWithPath: filePath, isDirectory: false)
         // Remove file name
-        let dirUrl = url.deletingLastPathComponent()
-        try FileManager.default.createDirectory(
-            at: dirUrl,
-            withIntermediateDirectories: true)
+        let dir = url.deletingLastPathComponent()
+        try fileManger.createDirectory(at: dir, withIntermediateDirectories: true)
+    }
+
+    private func writeFile(data: Data, at path: String, request: Request) -> EventLoopFuture<Void> {
+        let fileio = request.application.fileio
+        let eventLoop = request.eventLoop
+        return fileio
+            .openFile(path: path, mode: .write, flags: .allowFileCreation(), eventLoop: eventLoop)
+            .flatMap { (fileHandle: NIOFileHandle) -> EventLoopFuture<Void> in
+                var buffer = request.application.allocator.buffer(capacity: data.count)
+                buffer.writeBytes(data)
+                return fileio
+                    .write(fileHandle: fileHandle, buffer: buffer, eventLoop: eventLoop)
+                    .always { _ in try! fileHandle.close() }
+            }
     }
 }

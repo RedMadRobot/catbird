@@ -11,8 +11,8 @@ extension Application {
         request.allHTTPHeaderFields?.forEach { key, value in
             headers.add(name: key, value: value)
         }
-        let body = request.httpBody.map { data -> ByteBuffer in
-            var buffer = ByteBufferAllocator().buffer(capacity: data.count)
+        let body = request.httpBody.map { (data: Data) -> ByteBuffer in
+            var buffer = allocator.buffer(capacity: data.count)
             buffer.writeBytes(data)
             return buffer
         }
