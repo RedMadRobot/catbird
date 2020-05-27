@@ -34,8 +34,8 @@ final class InMemoryResponseStoreTests: RequestTestCase {
 
     func testPerformUpdate() {
         // Given
-        let createA = BookMock.create("A")
-        let createB = BookMock.create("B")
+        let createA = BookMock.create(name: "A")
+        let createB = BookMock.create(name: "B")
         perform(.add(createB))
 
         // When
@@ -116,4 +116,20 @@ final class InMemoryResponseStoreTests: RequestTestCase {
         XCTAssertNil(response.body.string)
     }
 
+    func testResponseDelay() throws {
+        // Given
+        let mock = BookMock.heavy(delay: 2)
+        perform(.add(mock))
+        let start = Date()
+
+        // When
+        request.method = .GET
+        request.url = "/api/books/1000"
+        let response = try store.response(for: request).wait()
+
+        // Then
+        XCTAssertEqual(Date().timeIntervalSince(start), 2, accuracy: 0.5)
+        XCTAssertEqual(response.status.code, 200)
+        XCTAssertEqual(response.body.string, "heavy book")
+    }
 }

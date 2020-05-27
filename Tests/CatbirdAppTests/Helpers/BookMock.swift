@@ -4,13 +4,14 @@ import Foundation
 
 enum BookMock: CatbirdMockConvertible {
     case books
-    case create(String)
+    case create(name: String)
     case first
     case second
+    case heavy(delay: Int)
 
     static let mocks: [BookMock] = [
         .books,
-        .create("3"),
+        .create(name: "3"),
         .first,
         .second
     ]
@@ -25,6 +26,8 @@ enum BookMock: CatbirdMockConvertible {
             return RequestPattern(method: .GET, url: "/api/books/1")
         case .second:
             return RequestPattern(method: .GET, url: "/api/books/2")
+        case .heavy:
+            return RequestPattern(method: .GET, url: "/api/books/1000")
         }
     }
 
@@ -38,6 +41,8 @@ enum BookMock: CatbirdMockConvertible {
             return ResponseMock(status: 200, body: Data("first book".utf8))
         case .second:
             return ResponseMock(status: 200, body: Data("second book".utf8), limit: 2)
+        case .heavy(let delay):
+            return ResponseMock(status: 200, body: Data("heavy book".utf8), delay: delay)
         }
     }
 
