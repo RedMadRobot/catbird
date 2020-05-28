@@ -18,7 +18,7 @@ final class FileResponseStore: ResponseStore {
 
     func response(for request: Request) -> EventLoopFuture<Response> {
         let path = filePath(for: request)
-        guard fileManger.fileExists(atPath: path) else {
+        guard fileExists(atPath: path) else {
             return request.eventLoop.makeFailedFuture(Abort(.notFound))
         }
         let response = request.fileio.streamFile(at: path)
@@ -44,6 +44,11 @@ final class FileResponseStore: ResponseStore {
 
     private func filePath(for request: Request) -> String {
         return directory.absoluteString + request.url.path
+    }
+
+    private func fileExists(atPath path: String) -> Bool {
+        var isDirectory: ObjCBool = false
+        return fileManger.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory.boolValue
     }
 
     private func createDirectories(for filePath: String) throws {
