@@ -1,6 +1,5 @@
 import CatbirdAPI
 import Vapor
-import OSLogging
 import Leaf
 
 public struct CatbirdInfo: Content {
@@ -22,16 +21,12 @@ public func configure(_ app: Application, _ configuration: AppConfiguration) thr
     // Store for static mocks on disk
     let fileStore: ResponseStore = LoggedResponseStore(
         store: FileResponseStore(directory: configuration.mocksDirectory),
-        logger: Logger(label: info.domain) {
-            OSLogHandler(subsystem: $0, category: "File")
-        })
+        logger: Loggers.fileStore)
 
     // Store for dynamic mocks in memory
     let inMemoryStore: ResponseStore = LoggedResponseStore(
         store: InMemoryResponseStore(),
-        logger: Logger(label: info.domain) {
-            OSLogHandler(subsystem: $0, category: "InMemory")
-        })
+        logger: Loggers.inMemoryStore)
 
     // MARK: - Register Middlewares
 
