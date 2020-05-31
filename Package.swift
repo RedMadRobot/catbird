@@ -15,7 +15,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
 
         // Templete engine
-        .package(url: "https://github.com/vapor/leaf.git", from: "4.0.0-rc.1.2"),
+        .package(url: "https://github.com/stencilproject/Stencil.git", from: "0.13.0"),
 
         // macOS system logger
         .package(url: "https://github.com/Alexander-Ignition/OSLogging", from: "1.0.0"),
@@ -29,7 +29,7 @@ let package = Package(
         .target(name: "CatbirdApp", dependencies: [
             .target(name: "CatbirdAPI"),
             .product(name: "Vapor", package: "vapor"),
-            .product(name: "Leaf", package: "leaf"),
+            .product(name: "Stencil", package: "Stencil"),
             .product(name: "OSLogging", package: "OSLogging"),
         ]),
         .testTarget(name: "CatbirdAppTests", dependencies: [

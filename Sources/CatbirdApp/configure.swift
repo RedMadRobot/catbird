@@ -1,6 +1,5 @@
 import CatbirdAPI
 import Vapor
-import Leaf
 
 public struct CatbirdInfo: Content {
     public static let current = CatbirdInfo()
@@ -12,9 +11,6 @@ public struct CatbirdInfo: Content {
 
 public func configure(_ app: Application, _ configuration: AppConfiguration) throws {
     let info = CatbirdInfo.current
-
-    app.views.use(.leaf)
-    app.leaf.cache.isEnabled = false
 
     // MARK: - Stores
 
@@ -53,11 +49,15 @@ public func configure(_ app: Application, _ configuration: AppConfiguration) thr
 
     // MARK: - Register Routes
 
+    let render = HTMLRender(
+        viewsDirectroy: app.directory.viewsDirectory,
+        allocator: app.allocator)
+
     app.group("catbird") { catbird in
         catbird.get("version") { _ in "Version: \(info.version)" }
         catbird.get("github") { $0.redirect(to: info.github) }
         catbird.get { request in
-            request.view.render("index", PageViewModel(items: inMemoryStore.items))
+            try render.render("index.html", ["page": PageViewModel(items: inMemoryStore.items)])
         }
         catbird.group("api") { api in
             api.get("info") { _ in info }

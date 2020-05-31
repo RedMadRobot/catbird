@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" role="main">
+    <div class="page-header pb-md-3 pt-md-3">
+        <h1>Catbird Mocks</h1>
+    </div>
+
+    {% if not page.patterns %}
+        Not any request patterns yet
+    {% endif %}
+
+    {% for pattern in page.patterns %}
+        <div class="card">
+            <div class="card-header pl-3">
+                <a class="header-link" data-toggle="collapse" href="#collapse{{ pattern.id }}">
+                    <span class="method {{ pattern.method|lowercase }} mr-2">{{ pattern.method }}</span>
+                    {{ pattern.url }}
+                </a>
+            </div>
+            <div class="collapse show" id="collapse#(pattern.id)">
+                <div class="card-body">
+                {% if pattern.headers.count > 0 %}
+                    <h5>Request</h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col col-2">Headers</div>
+                        <div class="col">
+                            <div class="code-highlight">
+                            {% for header in pattern.headers %}
+                                {{ header.key }}: {{ header.value }}<br>
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                {% endif %}
+
+                <h5>Response</h5>
+                <hr>
+                <div class="row">
+                    <div class="col col-2">Code</div>
+                    <div class="col">{{ pattern.response.status }}</div>
+                </div>
+
+                {% if pattern.response.headers.count > 0 %}
+                    <div class="row">
+                        <div class="col col-2">Headers</div>
+                        <div class="col">
+                            <div class="code-highlight">
+                            {% for header in pattern.response.headers %}
+                                {{ header.key }}: {{ header.value }}<br>
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                {% endif %}
+
+                {% if pattern.response.body %}
+                    <div class="row">
+                        <div class="col col-2">Body</div>
+                        <div class="col">
+                            <div class="code-highlight">
+                                {{ pattern.response.body }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
