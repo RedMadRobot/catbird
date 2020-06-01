@@ -18,7 +18,7 @@
                     {{ pattern.url }}
                 </a>
             </div>
-            <div class="collapse show" id="collapse#(pattern.id)">
+            <div class="collapse show" id="collapse{{ pattern.id }}">
                 <div class="card-body">
                 {% if pattern.headers.count > 0 %}
                     <h5>Request</h5>
@@ -67,6 +67,7 @@
                         </div>
                     </div>
                 {% endif %}
+                </div>
             </div>
         </div>
     {% endfor %}
