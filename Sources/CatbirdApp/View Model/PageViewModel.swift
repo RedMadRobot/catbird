@@ -1,14 +1,12 @@
 import CatbirdAPI
 
 struct PageViewModel: Encodable {
-    
+
     let patterns: [PatternViewModel]
-    
-    init(bags: [RequestBag]) {
-        var patterns = [PatternViewModel]()
-        for (index, bag) in bags.enumerated() {
-            patterns.append(PatternViewModel(id: index, request: bag.pattern, response: bag.data))
+
+    init(items: [ResponseStoreItem]) {
+        patterns = items.enumerated().map { id, item in
+            PatternViewModel(id: id, request: item.pattern, response: item.mock)
         }
-        self.patterns = patterns
     }
 }

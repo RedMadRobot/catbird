@@ -1,88 +1,86 @@
-import CatbirdAPI
+@testable import CatbirdAPI
 import XCTest
+
+enum BookMock: CatbirdMockConvertible {
+    case first
+
+    var pattern: RequestPattern {
+        .init(method: .PUT, url: "/books/1")
+    }
+
+    var response: ResponseMock {
+        .init(status: 200, body: Data("first book".utf8))
+    }
+}
 
 final class CatbirdTests: XCTestCase {
 
     private var catbird: Catbird!
     private var session: URLSession!
-    private let decoder = JSONDecoder()
-    private let baseURL = URL(string: "https://example.com")!
-    private var urlProtocols: [URLProtocol] { return MockURLProtocol.protocols }
+    private let url = URL(string: "https://example.com")!
+    private var requests: [URLRequest] { Network.requests }
 
     override func setUp() {
         super.setUp()
         let configuration = Catbird.session.configuration
-        configuration.protocolClasses = [MockURLProtocol.self]
+        configuration.protocolClasses = [Network.self]
         session = URLSession(configuration: configuration, delegate: nil, delegateQueue: .main)
-        catbird = Catbird(url: baseURL, session: session)
+        catbird = Catbird(url: url, session: session)
     }
 
     override func tearDown() {
         super.tearDown()
         session.invalidateAndCancel()
-        MockURLProtocol.clear()
+        Network.clear()
     }
 
-    func testSendCommandAdd() {
+    func testSendActionAdd() throws {
         // Given
-        let pattern = RequestPattern.put(URL(string: "/profile")!)
-        let data = ResponseData(statusCode: 400)
-        let bag = RequestBag(pattern: pattern, data: data)
-        MockURLProtocol.result = .success(makeResponse(status: 200))
+        let action = CatbirdAction.add(BookMock.first)
+        Network.result = .success(response(status: 200))
 
         // When
-        XCTAssertNoThrow(try catbird.send(.add(pattern: pattern, data: data)))
+        XCTAssertNoThrow(try catbird.send(action))
 
         // Then
-        XCTAssertEqual(urlProtocols.count, 1)
-        guard let request = urlProtocols.first?.request else { return }
-        XCTAssertEqual(request.httpMethod, "POST")
-        XCTAssertEqual(request.url, URL(string: "https://example.com/catbird/api")!)
-        XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
-        XCTAssertEqual(try decode(RequestBag.self, from: request), bag)
+        XCTAssertEqual(requests.count, 1)
+        XCTAssertEqual(requests.first, try action.makeRequest(to: url))
     }
 
-    func testSendCommandRemove() {
+    func testSendActionRemove() throws {
         // Given
-        let pattern = RequestPattern.get(URL(string: "/about")!)
-        MockURLProtocol.result = .success(makeResponse(status: 200))
+        let action = CatbirdAction.remove(BookMock.first)
+        Network.result = .success(response(status: 200))
 
         // When
-        XCTAssertNoThrow(try catbird.send(.remove(pattern: pattern)))
+        XCTAssertNoThrow(try catbird.send(action))
 
         // Then
-        XCTAssertEqual(urlProtocols.count, 1)
-        guard let request = urlProtocols.first?.request else { return }
-        XCTAssertEqual(request.httpMethod, "DELETE")
-        XCTAssertEqual(request.url, URL(string: "https://example.com/catbird/api")!)
-        XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
-        XCTAssertEqual(try decode(RequestPattern.self, from: request), pattern)
+        XCTAssertEqual(requests.count, 1)
+        XCTAssertEqual(requests.first, try action.makeRequest(to: url))
     }
 
-    func testSendCommandClear() {
+    func testSendActionRemoveAll() throws {
         // Given
-        MockURLProtocol.result = .success(makeResponse(status: 200))
+        let action = CatbirdAction.removeAll
+        Network.result = .success(response(status: 200))
 
         // When
-        XCTAssertNoThrow(try catbird.send(.clear))
+        XCTAssertNoThrow(try catbird.send(action))
 
         // Then
-        XCTAssertEqual(urlProtocols.count, 1)
-        guard let request = urlProtocols.first?.request else { return }
-        XCTAssertEqual(request.httpMethod, "DELETE")
-        XCTAssertEqual(request.url, URL(string: "https://example.com/catbird/api/clear")!)
-        XCTAssertNil(request.value(forHTTPHeaderField: "Content-Type"))
-        XCTAssertNil(request.httpBody)
+        XCTAssertEqual(requests.count, 1)
+        XCTAssertEqual(requests.first, try action.makeRequest(to: url))
     }
 
     @available(iOS 7, macOS 10.13, *)
     func testURLError() {
         // Given
         let connectionError = URLError(.networkConnectionLost)
-        MockURLProtocol.result = .failure(connectionError)
+        Network.result = .failure(connectionError)
 
         // When
-        XCTAssertThrowsError(try catbird.send(.clear)) { (error: Error) in
+        XCTAssertThrowsError(try catbird.send(.removeAll)) { (error: Error) in
             // Then
             XCTAssertEqual(error as NSError, connectionError as NSError)
         }
@@ -90,11 +88,7 @@ final class CatbirdTests: XCTestCase {
 
     // MARK: - Private
 
-    private func decode<T>(_ type: T.Type, from urlRequest: URLRequest) throws -> T? where T : Decodable {
-        return try urlRequest.httpBody.map { try decoder.decode(type, from: $0) }
-    }
-
-    private func makeResponse(status: Int) -> HTTPURLResponse {
-        return HTTPURLResponse(url: baseURL, statusCode: status, httpVersion: nil, headerFields: nil)!
+    private func response(status: Int) -> HTTPURLResponse {
+        return HTTPURLResponse(url: url, statusCode: status, httpVersion: nil, headerFields: nil)!
     }
 }

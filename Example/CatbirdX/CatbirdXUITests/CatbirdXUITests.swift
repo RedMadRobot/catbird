@@ -68,7 +68,7 @@ final class LoginUITests: XCTestCase {
         app.secureTextFields["password"].typeText("qwerty")
         app.buttons["Done"].tap()
 
-        wait(forElement: app.staticTexts["Main Screen"])
+        XCTAssert(app.staticTexts["Main Screen"].waitForExistence(timeout: 3))
     }
 
     func testBlockedUserError() {
@@ -80,15 +80,6 @@ final class LoginUITests: XCTestCase {
         app.secureTextFields["password"].typeText("burger")
         app.buttons["Done"].tap()
 
-        wait(forElement: app.alerts["Error"])
-    }
-}
-
-
-extension XCTestCase {
-    func wait(forElement element: XCUIElement, timeout: TimeInterval = 3.0) {
-        let predicate = NSPredicate(format: "exists == 1")
-        expectation(for: predicate, evaluatedWith: element)
-        waitForExpectations(timeout: timeout)
+        XCTAssert(app.alerts["Error"].waitForExistence(timeout: 3))
     }
 }

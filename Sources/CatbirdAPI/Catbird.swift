@@ -31,12 +31,12 @@ public final class Catbird {
     /// Send the command on the server.
     ///
     /// - Parameters:
-    ///   - command: Catbird API command.
+    ///   - command: Catbird API action.
     ///   - completion: A closure with the result of the command.
     /// - Returns: Session task.
     @discardableResult
-    public func send(_ command: Command, completion: @escaping (Error?) -> Void) -> URLSessionTask {
-        let request = try! command.makeRequest(to: url)
+    public func send(_ action: CatbirdAction, completion: @escaping (Error?) -> Void) -> URLSessionTask {
+        let request = try! action.makeRequest(to: url)
         return dataTask(request, completion: completion)
     }
 
@@ -44,12 +44,12 @@ public final class Catbird {
     ///
     /// - Warning: Only for testsing.
     /// - Note: Use `URLSessionConfiguration.timeoutIntervalForRequest` for timeout.
-    /// - Parameter command: Catbird API command.
+    /// - Parameter action: Catbird API action.
     /// - Throws: `URLError` or `CatbirdError`.
-    public func send(_ command: Command) throws {
+    public func send(_ action: CatbirdAction) throws {
         var outError: Error?
         
-        let task = send(command, completion: { (error: Error?) in
+        let task = send(action, completion: { (error: Error?) in
             outError = error
         })
 

@@ -5,56 +5,61 @@ import Foundation
 /// The intercepted request must return `ResponseData`.
 public struct RequestPattern: Codable, Hashable {
 
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(url.value)
-        hasher.combine(method)
-        hasher.combine(headerFields)
-    }
-    
     /// HTTP method.
-    public let method: String
+    public var method: HTTPMethod
 
     /// Request URL.
-    public let url: Pattern
+    public var url: Pattern
 
-    /// Request required headers. Default empty.
-    public let headerFields: [String: Pattern]
+    /// Request required headers.
+    public var headers: [String: Pattern]
 
     /// A new request pattern.
     ///
     /// - Parameters:
     ///   - method: HTTP method.
     ///   - url: Request URL or pattern.
-    ///   - headerFields: Request required headers. Default empty.
-    public init(method: String, url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) {
+    ///   - headers: Request required headers.
+    public init(
+        method: HTTPMethod,
+        url: PatternRepresentable,
+        headers: [String: PatternRepresentable] = [:]) {
+
         self.method = method
         self.url = url.pattern
-        self.headerFields = headerFields.mapValues { $0.pattern }
+        self.headers = headers.mapValues { $0.pattern }
     }
 
-    /// A new pattern for `GET` request.
-    public static func get(_ url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) -> RequestPattern {
-        return RequestPattern(method: "GET", url: url, headerFields: headerFields)
-    }
+}
 
-    /// A new pattern for `POST` request.
-    public static func post(_ url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) -> RequestPattern {
-        return RequestPattern(method: "POST", url: url, headerFields: headerFields)
-    }
+// MARK: - HTTPMethod
 
-    /// A new pattern for `PUT` request.
-    public static func put(_ url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) -> RequestPattern {
-        return RequestPattern(method: "PUT", url: url, headerFields: headerFields)
-    }
+extension RequestPattern {
+    public struct HTTPMethod: RawRepresentable, Hashable, Codable {
+        public let rawValue: String
 
-    /// A new pattern for `PATCH` request.
-    public static func patch(_ url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) -> RequestPattern {
-        return RequestPattern(method: "PATCH", url: url, headerFields: headerFields)
-    }
+        public init(rawValue: String) {
+            self.rawValue = rawValue
+        }
 
-    /// A new pattern for `DELETE` request.
-    public static func delete(_ url: PatternRepresentable, headerFields: [String: PatternRepresentable] = [:]) -> RequestPattern {
-        return RequestPattern(method: "DELETE", url: url, headerFields: headerFields)
+        public static let GET = HTTPMethod("GET")
+        public static let POST = HTTPMethod("POST")
+        public static let PUT = HTTPMethod("PUT")
+        public static let PATCH = HTTPMethod("PATCH")
+        public static let DELETE = HTTPMethod("DELETE")
     }
+}
 
+extension RequestPattern.HTTPMethod: ExpressibleByStringLiteral {
+    public init(stringLiteral value: String) {
+        self.rawValue = value
+    }
+}
+
+extension RequestPattern.HTTPMethod: LosslessStringConvertible {
+    public var description: String { rawValue }
+
+    public init(_ description: String) {
+        self.rawValue = description
+    }
 }

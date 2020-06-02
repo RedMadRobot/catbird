@@ -63,6 +63,15 @@
             </ActionContent>
          </ExecutionAction>
       </PostActions>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "0103206F22C4BC08007077E5"
+            BuildableName = "CatbirdX.app"
+            BlueprintName = "CatbirdX"
+            ReferencedContainer = "container:CatbirdX.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -75,17 +84,6 @@
             </BuildableReference>
          </TestableReference>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0103206F22C4BC08007077E5"
-            BuildableName = "CatbirdX.app"
-            BlueprintName = "CatbirdX"
-            ReferencedContainer = "container:CatbirdX.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -107,8 +105,6 @@
             ReferencedContainer = "container:CatbirdX.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

@@ -1,6 +1,5 @@
 ![](Resources/header.svg)
 # Catbird
-> Catbird | Drozd | Дрозд
 
 [![Build Status](https://travis-ci.com/RedMadRobot/catbird.svg?branch=master)](https://travis-ci.com/RedMadRobot/catbird)
 [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/RedMadRobot/Catbird/blob/master/LICENSE)
@@ -15,14 +14,6 @@
 - Dynamic mock server
 - Static file mock server
 - Proxy server with writing response files
-
-## Requirements
-
-Install `libressl` for `swift-nio`
-
-```bash
-$ brew install libressl
-```
 
 ## Installation
 
@@ -61,15 +52,15 @@ end
 import XCTest
 import Catbird
 
-enum LoginMock: RequestBagConvertible {
+enum LoginMock: CatbirdMockConvertible {
     case success
     case blockedUserError
 
     var pattern: RequestPattern {
-        return RequestPattern.post(URL(string: "/login")!)
+        RequestPattern(method: .POST, url: URL(string: "/login")!)
     }
 
-    var responseData: ResponseData {
+    var response: ResponseMock {
         switch self {
         case .success:
             let json: [String: Any] = [
@@ -79,9 +70,9 @@ enum LoginMock: RequestBagConvertible {
                     "expired_in": "123",
                 ]
             ]
-            return ResponseData(
-                statusCode: 200,
-                headerFields: ["Content-Type": "application/json"],
+            return ResponseMock(
+                status: 200,
+                headers: ["Content-Type": "application/json"],
                 body: try! JSONSerialization.data(withJSONObject: json))
 
         case .blockedUserError:
@@ -91,9 +82,9 @@ enum LoginMock: RequestBagConvertible {
                     "message": "user blocked"
                 ]
             ]
-            return ResponseData(
-                statusCode: 400,
-                headerFields: ["Content-Type": "application/json"],
+            return ResponseMock(
+                status: 400,
+                headers: ["Content-Type": "application/json"],
                 body: try! JSONSerialization.data(withJSONObject: json))
         }
     }
@@ -115,7 +106,7 @@ final class LoginUITests: XCTestCase {
     }
 
     override func tearDown() {
-        XCTAssertNoThrow(try catbird.send(.clear), "Remove all requests")
+        XCTAssertNoThrow(try catbird.send(.removeAll), "Remove all requests")
         super.tearDown()
     }
 
@@ -128,7 +119,7 @@ final class LoginUITests: XCTestCase {
         app.secureTextFields["password"].typeText("qwerty")
         app.buttons["Done"].tap()
 
-        wait(forElement: app.staticTexts["Main Screen"])
+        XCTAssert(app.staticTexts["Main Screen"].waitForExistence(timeout: 3))
     }
 
     func testBlockedUserError() {
@@ -140,15 +131,7 @@ final class LoginUITests: XCTestCase {
         app.secureTextFields["password"].typeText("burger")
         app.buttons["Done"].tap()
 
-        wait(forElement: app.alerts["Error"])
-    }
-}
-
-extension XCTestCase {
-    func wait(forElement element: XCUIElement, timeout: TimeInterval = 3.0) {
-        let predicate = NSPredicate(format: "exists == 1")
-        expectation(for: predicate, evaluatedWith: element)
-        waitForExpectations(timeout: timeout)
+        XCTAssert(app.alerts["Error"].waitForExistence(timeout: 3))
     }
 }
 ```

@@ -1,18 +1,11 @@
-osx_image: xcode10.2
+osx_image: xcode11.4
 language: swift
-env:
-  - SWIFT_VERSION=5.0
-addons:
-  homebrew:
-    packages:
-    - libressl
-    update: true
 
-script: 
+script:
   - make test
 
 before_deploy:
-  - make release 
+  - make release
   - zip -r catbird.zip catbird start.sh stop.sh LICENSE Public Resources Sources/CatbirdAPI
 
 deploy:
