@@ -1,16 +1,16 @@
 PODS:
-  - Catbird (0.5.0)
+  - Catbird (0.8.0)
 
 DEPENDENCIES:
-  - Catbird
+  - Catbird (= 0.8.0)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - Catbird
 
 SPEC CHECKSUMS:
-  Catbird: 897bfb654b31ef8a4998d2f38fc694e9686a5c9a
+  Catbird: 3d6fd9f9e10a07738deb201ec1987ccc5ca79aa0
 
-PODFILE CHECKSUM: e59c98be217c159d1f082df0dfb3ec7546b925b0
+PODFILE CHECKSUM: c6ca66b03511961a130822e9ace95268c894a935
 
-COCOAPODS: 1.7.2
+COCOAPODS: 1.9.3
