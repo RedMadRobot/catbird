@@ -21,7 +21,10 @@ POST /catbird/api/mocks
   "type": "update",
   "pattern": {
     "method": "POST",
-    "url": "/api/login"
+    "url": {
+      "kind": "equal",
+      "value": "/api/login"
+    }
   },
   "response": {
     "status": 200
@@ -39,7 +42,10 @@ POST /catbird/api/mocks
   "type": "update",
   "pattern": {
     "method": "POST",
-    "url": "/api/login"
+    "url": {
+      "kind": "equal",
+      "value": "/api/login"
+    }
   }
 }
 ```
