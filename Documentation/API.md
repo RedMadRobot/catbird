@@ -1,13 +1,13 @@
 # Catbird API
 
-- [Actions](##Actions)
-  - [Update](###Update)
-  - [Remove All](###remove-all)
-- [Objects](##Objects)
-  - [CatbirdAction](###CatbirdAction)
-  - [RequestPattern](###RequestPattern)
-  - [ResponseMock](###ResponseMock)
-  - [Pattern](###Pattern)
+- [Actions](#Actions)
+  - [Update](#Update)
+  - [Remove All](#remove-all)
+- [Objects](#Objects)
+  - [CatbirdAction](#CatbirdAction)
+  - [RequestPattern](#RequestPattern)
+  - [ResponseMock](#ResponseMock)
+  - [PatternMatch](#PatternMatch)
 
 ## Actions
 
@@ -18,6 +18,7 @@ Add or update `ResponseMock` for `RequestPattern`
 ```json
 POST /catbird/api/mocks
 {
+  "type": "update",
   "pattern": {
     "method": "POST",
     "url": "/api/login"
@@ -35,6 +36,7 @@ Remove `ResponseMock` for `RequestPattern`
 ```json
 POST /catbird/api/mocks
 {
+  "type": "update",
   "pattern": {
     "method": "POST",
     "url": "/api/login"
@@ -44,46 +46,48 @@ POST /catbird/api/mocks
 
 ### Remove All
 
-Request with empty body.
-
-```
+```json
 POST /catbird/api/mocks
+{
+  "type": "removeAll"
+}
 ```
 
 ## Objects
 
 ### CatbirdAction
 
-Name     | Optional | Type
+Name     | Required | Type
 ---------|----------|-------
-pattern  | true     | RequestPattern
-response | true     | ResponseMock
+type     | true     | String enum (update, removeAll)
+pattern  | false    | RequestPattern
+response | false    | ResponseMock
 
 ### RequestPattern
 
 `RequestPattern` is a description of the requests to be intercepted and to which the mock should be returned.
 
-Name    | Optional | Type
+Name    | Required | Type
 --------|----------|-------
-method  | false    | String
-url     | false    | Pattern
-headers | false    | [String: Pattern]
+method  | true     | String
+url     | true     | PatternMatch
+headers | true     | [String: PatternMatch]
 
 ### ResponseMock
 
 `ResponseMock` is a description of the http response.
 
-Name    | Optional | Type
+Name    | Required | Type
 --------|----------|-------
-status  | false    | Int
-headers | false    | [String: String]
-body    | true     | Base 64 encoded data
-limit   | true     | Int
-delay   | true     | Int
+status  | true     | Int
+headers | true     | [String: String]
+body    | false    | Base 64 encoded data
+limit   | false    | Int
+delay   | false    | Int
 
-### Pattern
+### PatternMatch
 
-Name  | Optional | Type
+Name  | Required | Type
 ------|----------|-------
-kind  | false    | String enum (equal, wildcard, regexp)
-value | false    | String
+kind  | true     | String enum (equal, wildcard, regexp)
+value | true     | String
