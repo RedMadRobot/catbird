@@ -5,7 +5,7 @@ struct HeaderItemViewModel: Encodable, Comparable {
     let key: String
     let value: String
     
-    init(_ item: Dictionary<String, Pattern>.Element) {
+    init(_ item: Dictionary<String, PatternMatch>.Element) {
         key = item.key
         value = item.value.value
     }

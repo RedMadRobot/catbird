@@ -1,6 +1,6 @@
-import struct CatbirdAPI.Pattern
+import struct CatbirdAPI.PatternMatch
 
-extension Pattern {
+extension PatternMatch {
     
     func match(_ string: String) -> Bool {
         let pattern = value
