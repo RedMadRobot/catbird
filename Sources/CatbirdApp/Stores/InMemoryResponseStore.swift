@@ -36,7 +36,7 @@ final class InMemoryResponseStore: ResponseStore {
     func perform(_ action: CatbirdAction, for request: Request) -> EventLoopFuture<Response> {
         let status = _queue.sync { () -> HTTPStatus in
             switch action {
-            case .update(let pattern, let mock?):
+            case .update(let pattern, let mock):
                 let item = ResponseStoreItem(pattern: pattern, mock: mock)
                 if let index = _items.firstIndex(where: { $0.pattern == pattern })  {
                     _items[index] = item
@@ -44,7 +44,7 @@ final class InMemoryResponseStore: ResponseStore {
                     _items.append(item)
                 }
                 return .created
-            case .update(let pattern, .none):
+            case .remove(let pattern):
                 _items.removeAll(where: { $0.pattern == pattern })
                 return .noContent
             case .removeAll:

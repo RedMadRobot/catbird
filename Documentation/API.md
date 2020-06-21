@@ -39,7 +39,7 @@ Remove `ResponseMock` for `RequestPattern`
 ```json
 POST /catbird/api/mocks
 {
-  "type": "update",
+  "type": "remove",
   "pattern": {
     "method": "POST",
     "url": {
@@ -65,7 +65,7 @@ POST /catbird/api/mocks
 
 Name     | Required | Type
 ---------|----------|-------
-type     | true     | String enum (update, removeAll)
+type     | true     | String enum (update, remove, removeAll)
 pattern  | false    | RequestPattern
 response | false    | ResponseMock
 
