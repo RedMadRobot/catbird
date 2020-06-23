@@ -10,6 +10,7 @@ public struct CatbirdInfo: Content {
 }
 
 public func configure(_ app: Application, _ configuration: AppConfiguration) throws {
+    app.routes.defaultMaxBodySize = ByteCount(stringLiteral: configuration.maxBodySize) 
     let info = CatbirdInfo.current
 
     // MARK: - Stores

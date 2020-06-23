@@ -14,6 +14,8 @@ public struct AppConfiguration {
 
     /// The directory for mocks.
     public let mocksDirectory: URL
+
+    public let maxBodySize: String
 }
 
 extension AppConfiguration {
@@ -36,9 +38,11 @@ extension AppConfiguration {
             return url
         }()
 
+        let maxBodySize = enviroment["CATBIRD_MAX_BODY_SIZE", default: "50mb"]
+
         if let path = enviroment["CATBIRD_PROXY_URL"], let url = URL(string: path) {
-            return AppConfiguration(mode: .write(url), mocksDirectory: mocksDirectory)
+            return AppConfiguration(mode: .write(url), mocksDirectory: mocksDirectory, maxBodySize: maxBodySize)
         }
-        return AppConfiguration(mode: .read, mocksDirectory: mocksDirectory)
+        return AppConfiguration(mode: .read, mocksDirectory: mocksDirectory, maxBodySize: maxBodySize)
     }
 }
