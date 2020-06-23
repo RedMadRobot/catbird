@@ -4,7 +4,7 @@ import Vapor
 public struct CatbirdInfo: Content {
     public static let current = CatbirdInfo()
 
-    public let version = "0.8.0"
+    public let version = "0.8.1"
     public let domain = "com.redmadrobot.catbird"
     public let github = "https://github.com/redmadrobot/catbird/"
 }
