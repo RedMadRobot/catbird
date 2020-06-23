@@ -109,7 +109,7 @@ final class AppTests: AppTestCase {
         try app.perform(.update(pattern, mock))
 
         // When
-        try app.perform(.update(pattern, nil))
+        try app.perform(.remove(pattern))
 
         // Then
         try app.test(.POST, "api/users/1") { response in

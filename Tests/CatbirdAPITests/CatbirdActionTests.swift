@@ -28,7 +28,7 @@ final class CatbirdActionTests: XCTestCase {
     func testRemove() throws {
         // Given
         let pattern = RequestPattern(method: .GET, url: "/about")
-        let action = CatbirdAction.update(pattern, nil)
+        let action = CatbirdAction.remove(pattern)
 
         // When
         let request = try XCTUnwrap(try action.makeRequest(to: baseURL))

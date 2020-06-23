@@ -1,7 +1,7 @@
 import Foundation
 
 /// The kind of pattern for matching request fields such as url and headers
-public struct Pattern: Codable, Hashable {
+public struct PatternMatch: Codable, Hashable {
     
     // MARK: - Public types
     
@@ -26,39 +26,39 @@ public struct Pattern: Codable, Hashable {
         self.value = value
     }
     
-    public static func equal(_ value: String) -> Pattern {
-        return Pattern(kind: .equal, value: value)
+    public static func equal(_ value: String) -> PatternMatch {
+        return PatternMatch(kind: .equal, value: value)
     }
     
-    public static func wildcard(_ value: String) -> Pattern {
-        return Pattern(kind: .wildcard, value: value)
+    public static func wildcard(_ value: String) -> PatternMatch {
+        return PatternMatch(kind: .wildcard, value: value)
     }
     
-    public static func regexp(_ value: String) -> Pattern {
-        return Pattern(kind: .regexp, value: value)
+    public static func regexp(_ value: String) -> PatternMatch {
+        return PatternMatch(kind: .regexp, value: value)
     }
 }
 
 
 /// Protocol for converting common types to Pattern
 public protocol PatternRepresentable {
-    var pattern: Pattern { get }
+    var pattern: PatternMatch { get }
 }
 
-extension Pattern: PatternRepresentable {
-    public var pattern: Pattern {
+extension PatternMatch: PatternRepresentable {
+    public var pattern: PatternMatch {
         return self
     }
 }
 
 extension String: PatternRepresentable {
-    public var pattern: Pattern {
+    public var pattern: PatternMatch {
         return .equal(self)
     }
 }
 
 extension URL: PatternRepresentable {
-    public var pattern: Pattern {
+    public var pattern: PatternMatch {
         return .equal(self.absoluteString)
     }
 }

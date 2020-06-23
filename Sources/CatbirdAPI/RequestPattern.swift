@@ -9,10 +9,10 @@ public struct RequestPattern: Codable, Hashable {
     public var method: HTTPMethod
 
     /// Request URL.
-    public var url: Pattern
+    public var url: PatternMatch
 
     /// Request required headers.
-    public var headers: [String: Pattern]
+    public var headers: [String: PatternMatch]
 
     /// A new request pattern.
     ///

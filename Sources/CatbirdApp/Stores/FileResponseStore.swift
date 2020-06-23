@@ -27,7 +27,7 @@ final class FileResponseStore: ResponseStore {
 
     func perform(_ action: CatbirdAction, for request: Request) -> EventLoopFuture<Response> {
         let eventLoop = request.eventLoop
-        guard case .update(_, let response?) = action, let body = response.body, !body.isEmpty else {
+        guard case .update(_, let response) = action, let body = response.body, !body.isEmpty else {
             return eventLoop.makeSucceededFuture(Response(status: .badRequest))
         }
         let path = filePath(for: request)

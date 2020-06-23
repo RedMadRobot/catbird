@@ -26,9 +26,9 @@ extension Application {
 extension CatbirdAction {
     var expectedStatus: HTTPResponseStatus {
         switch self {
-        case .update(_, .some):
+        case .update:
             return .created
-        case .update, .removeAll:
+        case .remove, .removeAll:
             return .noContent
         }
     }

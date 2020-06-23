@@ -2,8 +2,11 @@ import Foundation
 
 /// Catbird API action.
 public enum CatbirdAction: Equatable {
-    /// Add, update or remove `ResponseMock` for `RequestPattern`.
-    case update(RequestPattern, ResponseMock?)
+    /// Add, or insert `ResponseMock` for `RequestPattern`.
+    case update(RequestPattern, ResponseMock)
+
+    /// Remove `ResponseMock` for `RequestPattern`.
+    case remove(RequestPattern)
 
     /// Remove all mocks.
     case removeAll
@@ -35,7 +38,7 @@ extension CatbirdAction {
     /// - Parameter mock: Mock representation.
     /// - Returns: A new `CatbirdAction`.
     public static func remove(_ mock: CatbirdMockConvertible) -> CatbirdAction {
-        CatbirdAction.update(mock.pattern, nil)
+        CatbirdAction.remove(mock.pattern)
     }
 }
 
@@ -60,27 +63,33 @@ extension CatbirdAction {
 
 // MARK: - Codable
 
+enum CatbirdActionType: String, Codable {
+    case update
+    case remove
+    case removeAll
+}
+
 extension CatbirdAction: Codable {
     enum CondingKeys: String, CodingKey {
+        case type
         case pattern
         case response
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CondingKeys.self)
-        let pattern = try container.decodeIfPresent(RequestPattern.self, forKey: .pattern)
-        let response = try container.decodeIfPresent(ResponseMock.self, forKey: .response)
+        let type = try container.decode(CatbirdActionType.self, forKey: .type)
 
-        switch (pattern, response) {
-        case (let pattern?, let response):
+        switch type {
+        case .update:
+            let pattern = try container.decode(RequestPattern.self, forKey: .pattern)
+            let response = try container.decode(ResponseMock.self, forKey: .response)
             self = .update(pattern, response)
-        case (.none, .none):
+        case .remove:
+            let pattern = try container.decode(RequestPattern.self, forKey: .pattern)
+            self = .remove(pattern)
+        case .removeAll:
             self = .removeAll
-        case (.none, .some):
-            let context = DecodingError.Context(
-                codingPath: [CondingKeys.pattern],
-                debugDescription: "Not found `RequestPattern` for `ResponseMock`")
-            throw DecodingError.valueNotFound(RequestPattern.self, context)
         }
     }
 
@@ -88,10 +97,14 @@ extension CatbirdAction: Codable {
         var container = encoder.container(keyedBy: CondingKeys.self)
         switch self {
         case .update(let pattern, let response):
+            try container.encode(CatbirdActionType.update, forKey: .type)
             try container.encode(pattern, forKey: .pattern)
-            try container.encodeIfPresent(response, forKey: .response)
+            try container.encode(response, forKey: .response)
+        case .remove(let pattern):
+            try container.encode(CatbirdActionType.remove, forKey: .type)
+            try container.encode(pattern, forKey: .pattern)
         case .removeAll:
-            break
+            try container.encode(CatbirdActionType.removeAll, forKey: .type)
         }
     }
 }
