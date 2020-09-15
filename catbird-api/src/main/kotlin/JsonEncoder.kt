@@ -1,12 +1,12 @@
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.*
 
-class JsonEncoder(prettyPrinting: Boolean = false) {
-    private val gson = if (prettyPrinting) {
-        GsonBuilder().setPrettyPrinting().create()
-    } else {
-        Gson()
+class JsonEncoder(prettyPrint: Boolean = false) {
+    val json = Json {
+        this.prettyPrint = prettyPrint
+        this.classDiscriminator = "_type"
     }
 
-    fun encode(value: Any): String = gson.toJson(value)
+    inline fun <reified T> encode(value: T): String =
+        json.encodeToString(value)
 }

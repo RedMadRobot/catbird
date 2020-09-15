@@ -2,7 +2,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ResponseMockTest {
-    private val encoder = JsonEncoder()
+    private val encoder = JsonEncoder(prettyPrint = true)
 
     @Test
     fun `default values`() {
@@ -37,7 +37,14 @@ class ResponseMockTest {
         val response = ResponseMock()
         val actual = encoder.encode(response)
         val expected = """
-            {"status":200,"headers":{}}
+        {
+            "status": 200,
+            "headers": {
+            },
+            "body": null,
+            "limit": null,
+            "delay": null
+        }
         """.trimIndent()
         assertEquals(expected, actual)
     }
@@ -53,7 +60,15 @@ class ResponseMockTest {
         )
         val actual = encoder.encode(response)
         val expected = """
-            {"status":500,"headers":{"x":"y"},"body":"hello","limit":1,"delay":4}
+        {
+            "status": 500,
+            "headers": {
+                "x": "y"
+            },
+            "body": "hello",
+            "limit": 1,
+            "delay": 4
+        }
         """.trimIndent()
         assertEquals(expected, actual)
     }

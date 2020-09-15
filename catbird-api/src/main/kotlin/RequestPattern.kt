@@ -1,3 +1,6 @@
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class RequestPattern(
     var method: String = "GET",
     var url: PatternMatch = PatternMatch(value = ""),
@@ -5,10 +8,6 @@ data class RequestPattern(
 ) {
     fun setPath(string: String) {
         url = PatternMatch(value = string)
-    }
-
-    fun setPathWildcard(string: String) {
-        url = PatternMatch(PatternMatch.Kind.WILDCARD, string)
     }
 
     fun setHeader(name: String, value: String) {

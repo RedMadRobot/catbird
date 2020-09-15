@@ -1,14 +1,15 @@
+import kotlinx.serialization.Serializable
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.Base64
 
+@Serializable
 data class ResponseMock(
     var status: Int = 200,
     var headers: MutableMap<String, String> = mutableMapOf(),
     var body: String? = null,
     var limit: Int? = null,
     var delay: Int? = null,
-    var content: List<Byte>? = null
 ) {
     fun setHeader(name: String, value: String) {
         headers[name] = value

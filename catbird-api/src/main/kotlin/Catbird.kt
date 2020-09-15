@@ -20,7 +20,7 @@ class Catbird(
     }
 
     fun removeAll() {
-        perform(CatbirdAction.RemoveAll)
+        perform(CatbirdAction.RemoveAll())
     }
 
     fun perform(action: CatbirdAction) {
@@ -30,16 +30,19 @@ class Catbird(
     }
 
     private fun post(url: URL, body: String) {
-        val connection = url.openConnection() as HttpURLConnection
-        connection.requestMethod = "POST"
-        connection.doOutput = true
-        connection.setRequestProperty("Content-Type", "application/json")
+        with(url.openConnection() as HttpURLConnection) {
+            requestMethod = "POST"
+            doOutput = true
+            setRequestProperty("Content-Type", "application/json")
 
-        val writer = OutputStreamWriter(connection.outputStream);
-        writer.write(body);
-        writer.flush()
+            OutputStreamWriter(outputStream).use {
+                it.write(body)
+                it.flush()
+            }
 
-        val data = connection.inputStream.bufferedReader().readText()
-        println(data)
+            inputStream.bufferedReader().use {
+                print(it.readText())
+            }
+        }
     }
 }

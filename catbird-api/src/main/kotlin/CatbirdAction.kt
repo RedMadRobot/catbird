@@ -1,13 +1,26 @@
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 sealed class CatbirdAction(val type: Type) {
+    @Serializable
     enum class Type {
-        @SerializedName("update") UPDATE,
-        @SerializedName("remove") REMOVE,
-        @SerializedName("removeAll") REMOVE_ALL
+        @SerialName("update") UPDATE,
+        @SerialName("remove") REMOVE,
+        @SerialName("removeAll") REMOVE_ALL
     }
 
-    class Update(val pattern: RequestPattern, val response: ResponseMock): CatbirdAction(Type.UPDATE)
-    class Remove(val pattern: RequestPattern): CatbirdAction(Type.REMOVE)
-    object RemoveAll: CatbirdAction(Type.REMOVE_ALL)
+    @Serializable
+    data class Update(
+        val pattern: RequestPattern,
+        val response: ResponseMock
+    ): CatbirdAction(Type.UPDATE)
+
+    @Serializable
+    data class Remove(
+        val pattern: RequestPattern
+    ): CatbirdAction(Type.REMOVE)
+
+    @Serializable
+    class RemoveAll: CatbirdAction(Type.REMOVE_ALL)
 }

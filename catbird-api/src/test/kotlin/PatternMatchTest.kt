@@ -2,7 +2,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class PatternMatchTest {
-    private val encoder = JsonEncoder()
+    private val encoder = JsonEncoder(prettyPrint = true)
 
     @Test
     fun `default kind equal`() {
@@ -18,7 +18,10 @@ class PatternMatchTest {
         )
         val actual = encoder.encode(pattern)
         var expected = """
-            {"kind":"equal","value":"accounts"}
+        {
+            "kind": "equal",
+            "value": "accounts"
+        }
         """.trimIndent()
         assertEquals(expected, actual)
     }
@@ -31,7 +34,10 @@ class PatternMatchTest {
         )
         val actual = encoder.encode(pattern)
         var expected = """
-            {"kind":"wildcard","value":"accounts"}
+        {
+            "kind": "wildcard",
+            "value": "accounts"
+        }
         """.trimIndent()
         assertEquals(expected, actual)
     }
@@ -44,7 +50,10 @@ class PatternMatchTest {
         )
         val actual = encoder.encode(pattern)
         var expected = """
-            {"kind":"regexp","value":"accounts"}
+        {
+            "kind": "regexp",
+            "value": "accounts"
+        }
         """.trimIndent()
         assertEquals(expected, actual)
     }
