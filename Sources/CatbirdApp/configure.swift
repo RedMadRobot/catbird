@@ -2,11 +2,14 @@ import CatbirdAPI
 import Vapor
 
 public struct CatbirdInfo: Content {
-    public static let current = CatbirdInfo()
+    public static let current = CatbirdInfo(
+        version: "0.8.1",
+        domain: "com.redmadrobot.catbird",
+        github: "https://github.com/redmadrobot/catbird/")
 
-    public let version = "0.8.1"
-    public let domain = "com.redmadrobot.catbird"
-    public let github = "https://github.com/redmadrobot/catbird/"
+    public let version: String
+    public let domain: String
+    public let github: String
 }
 
 public func configure(_ app: Application, _ configuration: AppConfiguration) throws {
