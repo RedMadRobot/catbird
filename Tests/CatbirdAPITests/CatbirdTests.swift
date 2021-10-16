@@ -76,13 +76,18 @@ final class CatbirdTests: XCTestCase {
     @available(iOS 7, macOS 10.13, *)
     func testURLError() {
         // Given
-        let connectionError = URLError(.networkConnectionLost)
+        let connectionError = NSError(
+            domain: NSURLErrorDomain,
+            code: NSURLErrorNetworkConnectionLost
+        )
         Network.result = .failure(connectionError)
 
         // When
         XCTAssertThrowsError(try catbird.send(.removeAll)) { (error: Error) in
             // Then
-            XCTAssertEqual(error as NSError, connectionError as NSError)
+            let nsError = error as NSError
+            XCTAssertEqual(nsError.domain, connectionError.domain)
+            XCTAssertEqual(nsError.code, connectionError.code)
         }
     }
 
