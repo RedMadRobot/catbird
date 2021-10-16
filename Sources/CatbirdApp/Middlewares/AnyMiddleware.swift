@@ -32,7 +32,7 @@ extension AnyMiddleware {
                     return request.eventLoop.makeSucceededFuture(response)
                 }
                 .flatMapError { (error: Error) -> EventLoopFuture<Response> in
-                    if let abort = error as? Abort, abort.status == .notFound {
+                    if let abort = error as? AbortError, abort.status == .notFound {
                         return handler(request)
                     }
                     return request.eventLoop.makeFailedFuture(error)
