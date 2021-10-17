@@ -19,4 +19,4 @@ clean:
 	swift package clean
 
 lint:
-	pod spec lint
+	bundle exec pod spec lint
