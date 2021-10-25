@@ -15,7 +15,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
 
         // Templete engine
-        .package(url: "https://github.com/stencilproject/Stencil.git", from: "0.13.0"),
+        .package(url: "https://github.com/stencilproject/Stencil.git", from: "0.14.0"),
 
         // macOS system logger
         .package(url: "https://github.com/Alexander-Ignition/OSLogging", from: "1.0.0"),
