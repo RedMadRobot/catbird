@@ -11,10 +11,13 @@ final class RedirectMiddleware: Middleware {
     // MARK: - Middleware
 
     func respond(to request: Request, chainingTo next: Responder) -> EventLoopFuture<Response> {
+        var headers = request.headers
+        headers.remove(name: "Host")
+        
         var clientRequest = ClientRequest(
             method: request.method,
             url: redirectURI,
-            headers: request.headers,
+            headers: headers,
             body: request.body.data)
 
         clientRequest.url.string += request.url.string

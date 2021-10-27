@@ -17,6 +17,7 @@ struct JokeAPI {
 
     /// Required headers for all requests.
     let headers: HTTPHeaders = [
+        "Host": "127.0.0.1:8080",
         "Accept": "text/plain",
         "User-Agent": "Catbird (\(CatbirdInfo.current.github)"
     ]
