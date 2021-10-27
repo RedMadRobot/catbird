@@ -54,7 +54,7 @@ public func configure(_ app: Application, _ configuration: AppConfiguration) thr
     // MARK: - Register Routes
 
     let render = HTMLRender(
-        viewsDirectroy: app.directory.viewsDirectory,
+        viewsDirectory: Bundle.module.path(forResource: "Resources", ofType: nil)!,
         allocator: app.allocator)
 
     app.group("catbird") { catbird in

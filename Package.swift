@@ -1,4 +1,4 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.3
 import PackageDescription
 
 let package = Package(
@@ -31,11 +31,12 @@ let package = Package(
             .product(name: "Vapor", package: "vapor"),
             .product(name: "Stencil", package: "Stencil"),
             .product(name: "OSLogging", package: "OSLogging"),
-        ]),
+        ], resources: [ .copy("Resources") ]),
+        
         .testTarget(name: "CatbirdAppTests", dependencies: [
             .target(name: "CatbirdApp"),
             .product(name: "XCTVapor", package: "vapor"),
-        ]),
+        ], exclude: ["Files"]),
 
         // CLI
         .target(name: "CatbirdRun", dependencies: ["CatbirdApp"]),

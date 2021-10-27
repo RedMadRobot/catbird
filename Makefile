@@ -11,6 +11,7 @@ build:
 release:
 	swift build -c release
 	cp ./.build/x86_64-apple-macosx/release/catbird ./catbird
+	cp -R ./.build/x86_64-apple-macosx/release/Catbird_CatbirdApp.bundle ./Catbird_CatbirdApp.bundle
 
 update:
 	swift package update

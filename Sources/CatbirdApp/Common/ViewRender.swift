@@ -6,8 +6,8 @@ final class HTMLRender {
     private let environment: Stencil.Environment
     private let allocator: ByteBufferAllocator
 
-    init(viewsDirectroy: String, allocator: ByteBufferAllocator) {
-        let loader = FileSystemLoader(paths: [Path(viewsDirectroy)])
+    init(viewsDirectory: String, allocator: ByteBufferAllocator) {
+        let loader = FileSystemLoader(paths: [Path(viewsDirectory)])
         self.environment = Environment(loader: loader)
         self.allocator = allocator
     }

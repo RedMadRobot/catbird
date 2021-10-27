@@ -6,7 +6,7 @@ script:
 
 before_deploy:
   - make release
-  - zip -r catbird.zip catbird start.sh stop.sh LICENSE Public Resources Sources/CatbirdAPI
+  - zip -r catbird.zip catbird Catbird_CatbirdApp.bundle start.sh stop.sh LICENSE Public Sources/CatbirdAPI
 
 deploy:
   provider: releases
