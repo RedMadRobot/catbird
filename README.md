@@ -1,6 +1,7 @@
 ![](Resources/header.svg)
 # Catbird
 
+[![Test](https://github.com/RedMadRobot/catbird/actions/workflows/test.yml/badge.svg)](https://github.com/RedMadRobot/catbird/actions/workflows/test.yml)
 [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/RedMadRobot/Catbird/blob/master/LICENSE)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Catbird.svg)](https://cocoapods.org/pods/Catbird)
 [![Platform](https://img.shields.io/cocoapods/p/Catbird.svg?style=flat)](https://cocoapods.org/pods/Catbird)
