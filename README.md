@@ -1,7 +1,7 @@
 ![](Resources/header.svg)
 # Catbird
 
-[![Build Status](https://travis-ci.com/RedMadRobot/catbird.svg?branch=master)](https://travis-ci.com/RedMadRobot/catbird)
+[![Test](https://github.com/RedMadRobot/catbird/actions/workflows/test.yml/badge.svg)](https://github.com/RedMadRobot/catbird/actions/workflows/test.yml)
 [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/RedMadRobot/Catbird/blob/master/LICENSE)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Catbird.svg)](https://cocoapods.org/pods/Catbird)
 [![Platform](https://img.shields.io/cocoapods/p/Catbird.svg?style=flat)](https://cocoapods.org/pods/Catbird)
@@ -91,7 +91,7 @@ enum LoginMock: CatbirdMockConvertible {
 }
 
 final class LoginUITests: XCTestCase {
-    
+
     private let catbird = Catbird()
     private var app: XCUIApplication!
 
@@ -146,7 +146,7 @@ Three types of patterns can be used:
 - `wildcard` - the request value match with the wildcard pattern (see below),
 - `regexp` - the request value match with the regular expression pattern.
 
-##### Note: 
+##### Note:
 If you want to apply a wildcard pattern for the url query parameters, don't forget escape `?` symbol after domain or path.
 
 ```swift
@@ -163,7 +163,7 @@ The following characters have special magic meaning when used in a pattern:
 
 - `*` matches 0 or more characters
 - `?` matches 1 character
-- `[a-z]` matches a range of characters, similar to a RegExp range. 
+- `[a-z]` matches a range of characters, similar to a RegExp range.
 - `{bar,baz}` matches one of the substitution listed in braces. For example pattern  `foo{bar,baz}` matches strings `foobar` or `foobaz`
 
 You can escape special characters with backslash `\`.
