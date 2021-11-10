@@ -10,7 +10,7 @@ build:
 
 release:
 	swift build -c release
-	cp ./.build/apple/Products/Release/catbird ./catbird
+	cp ./.build/x86_64-apple-macosx/release/catbird ./catbird
 
 update:
 	swift package update
