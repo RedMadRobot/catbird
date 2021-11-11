@@ -13,7 +13,7 @@ jobs:
       - name: Build
         run: make release
       - name: Archive
-        run: zip -r catbird.zip README.md LICENSE catbird
+        run: zip -r catbird.zip catbird start.sh stop.sh LICENSE Public Resources Sources/CatbirdAPI
       - name: Upload GitHub Release Assets
         run: gh release upload ${{ github.event.release.tag_name }} catbird.zip
         env:
