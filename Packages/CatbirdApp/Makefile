@@ -1,8 +1,8 @@
 test:
 	swift test --enable-code-coverage --disable-automatic-resolution
 	xcrun llvm-cov report \
-		.build/x86_64-apple-macosx/debug/CatbirdPackageTests.xctest/Contents/MacOS/CatbirdPackageTests \
-		-instr-profile=.build/x86_64-apple-macosx/debug/codecov/default.profdata \
+		.build/debug/CatbirdAppPackageTests.xctest/Contents/MacOS/CatbirdAppPackageTests \
+		-instr-profile=.build/debug/codecov/default.profdata \
 		-ignore-filename-regex=".build|Tests"
 
 build:

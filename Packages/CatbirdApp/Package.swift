@@ -20,12 +20,12 @@ let package = Package(
         .package(url: "https://github.com/Alexander-Ignition/OSLogging", from: "1.0.0"),
 
         // CatbirdAPI
-        .package(path: "../../")
+        .package(name: "Catbird", path: "../../")
     ],
     targets: [
         // Web Server
         .target(name: "CatbirdApp", dependencies: [
-            .product(name: "CatbirdAPI", package: "catbird"),
+            .product(name: "CatbirdAPI", package: "Catbird"),
             .product(name: "Vapor", package: "vapor"),
             .product(name: "Stencil", package: "Stencil"),
             .product(name: "OSLogging", package: "OSLogging"),
