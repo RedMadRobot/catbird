@@ -11,9 +11,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build
-        run: make release
+        run: |
+          cd Packages/CatbirdApp
+          make release
       - name: Archive
-        run: zip -r catbird.zip catbird start.sh stop.sh LICENSE Public Resources Sources/CatbirdAPI
+        run: |
+          cd ..
+          zip -r catbird.zip Packages/CatbirdApp/catbird Packages/CatbirdApp/start.sh Packages/CatbirdApp/stop.sh LICENSE Public Resources
       - name: Upload GitHub Release Assets
         run: gh release upload ${{ github.event.release.tag_name }} catbird.zip
         env:

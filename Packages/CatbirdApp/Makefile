@@ -8,6 +8,10 @@ test:
 build:
 	swift build
 
+release:
+	swift build -c release
+	cp ./.build/x86_64-apple-macosx/release/catbird ./catbird
+
 update:
 	swift package update
 

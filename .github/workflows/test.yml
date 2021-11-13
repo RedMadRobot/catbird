@@ -18,5 +18,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build and test
-        run: make test
+        run: |
+          make test
+          cd Packages/CatbirdApp
+          make test
         shell: bash
