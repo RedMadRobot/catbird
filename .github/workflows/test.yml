@@ -17,9 +17,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Build and test
-        run: |
-          make test
-          cd Packages/CatbirdApp
-          make test
+      - name: Build and test Catbird package
+        run: make test
         shell: bash
+      - name: Build and test CatbirdApp package
+        run: make test
+        shell: bash
+        working-directory: Packages/CatbirdApp
