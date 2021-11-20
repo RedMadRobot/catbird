@@ -15,7 +15,6 @@ jobs:
         working-directory: Packages/CatbirdApp
       - name: Archive
         run: |
-          cd ..
           zip -r catbird.zip Packages/CatbirdApp/catbird Packages/CatbirdApp/start.sh Packages/CatbirdApp/stop.sh LICENSE Public Resources
       - name: Upload GitHub Release Assets
         run: gh release upload ${{ github.event.release.tag_name }} catbird.zip
