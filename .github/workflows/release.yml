@@ -12,7 +12,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Build
         run: make release
-        working-directory: Packages/CatbirdApp
       - name: Archive
         run: |
           zip -r catbird.zip catbird start.sh stop.sh ../LICENSE Public Resources
