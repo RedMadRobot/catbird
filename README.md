@@ -17,7 +17,34 @@
 
 ## Installation
 
-### Cocoapods
+To use Catbird in UI-tests you must have Catbird server and Catbird API code which allows you to communicate with the server.
+
+| Type | Server | API code |
+| ---- | ------ | -------- |
+| Manual    | ✅ | ✅ |
+| Homebrew  | ✅ | 🚫 |
+| SPM       | 🚫 | ✅ |
+| CocoaPods | ✅ | ✅ |
+
+### Manual
+
+Download [catbird.zip](https://github.com/RedMadRobot/catbird/releases/latest/download/catbird.zip) archive from the [latest release](https://github.com/RedMadRobot/catbird/releases/latest) page.
+
+### Using [Homebrew](http://brew.sh/):
+
+Run the following command:
+
+```
+brew install RedMadRobot/formulae/catbird
+```
+
+### Using [SPM](https://www.swift.org/package-manager/):
+
+If you have an Xcode project, open it and add Catbird Package using the following URL:
+
+`https://github.com/RedMadRobot/catbird.git`
+
+### Using [CocoaPods](https://cocoapods.org):
 
 Add `Catbird` to UI tests target.
 
