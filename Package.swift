@@ -12,7 +12,7 @@ let package = Package(
     ],
     targets: [
         // Common API
-        .target(name: "CatbirdAPI"),
-        .testTarget(name: "CatbirdAPITests", dependencies: ["CatbirdAPI"])
+        .target(name: "CatbirdAPI", path: "Packages/CatbirdAPI/Sources"),
+        .testTarget(name: "CatbirdAPITests", dependencies: ["CatbirdAPI"], path: "Packages/CatbirdAPI/Tests")
     ]
 )
