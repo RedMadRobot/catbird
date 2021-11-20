@@ -19,4 +19,3 @@ jobs:
         uses: actions/checkout@v2
       - name: Build and test
         run: make test
-        shell: bash

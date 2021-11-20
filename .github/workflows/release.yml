@@ -13,11 +13,13 @@ jobs:
       - name: Build
         run: make release
       - name: Archive
-        run: zip -r catbird.zip catbird start.sh stop.sh LICENSE Public Resources Sources/CatbirdAPI
+        run: zip -r catbird.zip catbird start.sh stop.sh LICENSE Public Resources
+        working-directory: Packages/CatbirdApp
       - name: Upload GitHub Release Assets
         run: gh release upload ${{ github.event.release.tag_name }} catbird.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: Packages/CatbirdApp
       - name: Install Cocoapods
         run: bundle install
       - name: Deploy to Cocoapods

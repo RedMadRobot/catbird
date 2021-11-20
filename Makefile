@@ -1,16 +1,14 @@
 test:
-	swift test --enable-code-coverage --disable-automatic-resolution
-	xcrun llvm-cov report \
-		.build/x86_64-apple-macosx/debug/CatbirdPackageTests.xctest/Contents/MacOS/CatbirdPackageTests \
-		-instr-profile=.build/x86_64-apple-macosx/debug/codecov/default.profdata \
-		-ignore-filename-regex=".build|Tests"
-
+	$(call test)
+	$(call cov_report,Catbird)
+	cd Packages/CatbirdApp; $(call test)
+	cd Packages/CatbirdApp; $(call cov_report,CatbirdApp)
 build:
 	swift build
 
 release:
-	swift build -c release
-	cp ./.build/x86_64-apple-macosx/release/catbird ./catbird
+	cd Packages/CatbirdApp; swift build -c release
+	cd Packages/CatbirdApp; cp ./.build/release/catbird ./catbird
 
 update:
 	swift package update
@@ -20,3 +18,14 @@ clean:
 
 lint:
 	bundle exec pod spec lint
+
+define test
+    swift test --enable-code-coverage --disable-automatic-resolution
+endef
+
+define cov_report
+    xcrun llvm-cov report \
+		.build/debug/$(1)PackageTests.xctest/Contents/MacOS/$(1)PackageTests \
+		-instr-profile=.build/debug/codecov/default.profdata \
+		-ignore-filename-regex=".build|Tests"
+endef
