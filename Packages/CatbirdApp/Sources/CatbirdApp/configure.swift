@@ -3,7 +3,7 @@ import Vapor
 
 public struct CatbirdInfo: Content {
     public static let current = CatbirdInfo(
-        version: "0.8.2",
+        version: "0.9.0",
         domain: "com.redmadrobot.catbird",
         github: "https://github.com/redmadrobot/catbird/")
 
@@ -13,7 +13,7 @@ public struct CatbirdInfo: Content {
 }
 
 public func configure(_ app: Application, _ configuration: AppConfiguration) throws {
-    app.routes.defaultMaxBodySize = ByteCount(stringLiteral: configuration.maxBodySize) 
+    app.routes.defaultMaxBodySize = ByteCount(stringLiteral: configuration.maxBodySize)
     let info = CatbirdInfo.current
 
     // MARK: - Stores
