@@ -3,12 +3,15 @@ test:
 	$(call cov_report,Catbird)
 	cd Packages/CatbirdApp; $(call test)
 	cd Packages/CatbirdApp; $(call cov_report,CatbirdApp)
-build:
-	swift build
 
 release:
-	cd Packages/CatbirdApp; swift build -c release
-	cd Packages/CatbirdApp; cp ./.build/release/catbird ./catbird
+	cd Packages/CatbirdApp && swift build -c release
+	cp Packages/CatbirdApp/.build/release/catbird ./catbird
+
+archive:
+	zip -v catbird.zip catbird LICENSE
+	cd Packages/CatbirdApp && zip ../../catbird.zip -r -v start.sh stop.sh Public Resources
+	cd Packages/CatbirdAPI && zip ../../catbird.zip -r -v Sources/CatbirdAPI
 
 update:
 	swift package update

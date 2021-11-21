@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
   s.homepage       = 'https://github.com/RedMadRobot/catbird'
   s.license        = { type: 'MIT', file: 'LICENSE' }
   s.author         = { 'Alexander Ignition' => 'ai@redmadrobot.com' }
-  s.source_files   = 'Sources/CatbirdAPI/*.swift'
+  s.source_files   = 'Sources/CatbirdAPI/*.swift' # files in catbird.zip
   s.source         = { http: "#{s.homepage}/releases/download/#{s.version}/catbird.zip" }
   s.preserve_paths = '*'
   s.swift_version = '5'
