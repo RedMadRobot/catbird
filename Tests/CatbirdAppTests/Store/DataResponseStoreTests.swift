@@ -61,9 +61,8 @@ final class DataResponseStoreTests: RequestTestCase {
         let pattern = RequestPattern.get("/login", headerFields: [:])
         try! store.setResponse(data: data, for: pattern)
         XCTAssertEqual(store.bags.count, 1)
-
-        let request = makeRequest(http: HTTPRequest(method: .DELETE))
-        XCTAssertNoThrow(try store.removeAllResponses(for: request))
+        
+        try! store.removeAllResponses()
         XCTAssertEqual(store.bags.count, 0)
     }
     

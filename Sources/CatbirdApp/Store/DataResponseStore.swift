@@ -27,12 +27,8 @@ final class DataResponseStore: ResponseStore, BagsResponseStore {
         }
     }
 
-    func removeAllResponses(for request: Request) throws {
-        if let session = request.http.headers[Catbird.sessionId].first {
-            bags.removeAll { $0.pattern.headerFields[Catbird.sessionId]?.value == session }
-        } else {
-            bags.removeAll(keepingCapacity: true)
-        }
+    func removeAllResponses() throws {
+        bags.removeAll(keepingCapacity: true)
     }
 
 }

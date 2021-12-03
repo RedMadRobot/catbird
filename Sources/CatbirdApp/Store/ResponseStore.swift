@@ -12,7 +12,7 @@ protocol ResponseWriter {
 
     func setResponse(data: ResponseData?, for pattern: RequestPattern) throws
 
-    func removeAllResponses(for request: Request) throws
+    func removeAllResponses() throws
 }
 
 extension ResponseWriter {
