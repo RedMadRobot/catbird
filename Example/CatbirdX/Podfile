@@ -6,6 +6,6 @@ target 'CatbirdX' do
   target 'CatbirdXUITests' do
     inherit! :search_paths
 
-    pod 'Catbird'
+    pod 'Catbird', '0.8.0'
   end
 end

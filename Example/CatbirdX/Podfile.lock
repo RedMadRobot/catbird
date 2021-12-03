@@ -1,0 +1,16 @@
+PODS:
+  - Catbird (0.8.0)
+
+DEPENDENCIES:
+  - Catbird (= 0.8.0)
+
+SPEC REPOS:
+  trunk:
+    - Catbird
+
+SPEC CHECKSUMS:
+  Catbird: 3d6fd9f9e10a07738deb201ec1987ccc5ca79aa0
+
+PODFILE CHECKSUM: c6ca66b03511961a130822e9ace95268c894a935
+
+COCOAPODS: 1.9.3

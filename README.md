@@ -1,8 +1,7 @@
 ![](Resources/header.svg)
 # Catbird
-> Catbird | Drozd | Дрозд
 
-[![Build Status](https://travis-ci.com/RedMadRobot/catbird.svg?branch=master)](https://travis-ci.com/RedMadRobot/catbird)
+[![Test](https://github.com/RedMadRobot/catbird/actions/workflows/test.yml/badge.svg)](https://github.com/RedMadRobot/catbird/actions/workflows/test.yml)
 [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/RedMadRobot/Catbird/blob/master/LICENSE)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Catbird.svg)](https://cocoapods.org/pods/Catbird)
 [![Platform](https://img.shields.io/cocoapods/p/Catbird.svg?style=flat)](https://cocoapods.org/pods/Catbird)
@@ -16,17 +15,36 @@
 - Static file mock server
 - Proxy server with writing response files
 
-## Requirements
-
-Install `libressl` for `swift-nio`
-
-```bash
-$ brew install libressl
-```
-
 ## Installation
 
-### Cocoapods
+To use Catbird in UI-tests you must have Catbird server and Catbird API code which allows you to communicate with the server.
+
+| Type | Server | API code |
+| ---- | ------ | -------- |
+| Manual    | ✅ | ✅ |
+| Homebrew  | ✅ | 🚫 |
+| SPM       | 🚫 | ✅ |
+| CocoaPods | ✅ | ✅ |
+
+### Manual
+
+Download [catbird.zip](https://github.com/RedMadRobot/catbird/releases/latest/download/catbird.zip) archive from the [latest release](https://github.com/RedMadRobot/catbird/releases/latest) page.
+
+### Using [Homebrew](http://brew.sh/):
+
+Run the following command:
+
+```
+brew install RedMadRobot/formulae/catbird
+```
+
+### Using [SPM](https://www.swift.org/package-manager/):
+
+If you have an Xcode project, open it and add Catbird Package using the following URL:
+
+`https://github.com/RedMadRobot/catbird.git`
+
+### Using [CocoaPods](https://cocoapods.org):
 
 Add `Catbird` to UI tests target.
 
@@ -61,15 +79,15 @@ end
 import XCTest
 import Catbird
 
-enum LoginMock: RequestBagConvertible {
+enum LoginMock: CatbirdMockConvertible {
     case success
     case blockedUserError
 
     var pattern: RequestPattern {
-        return RequestPattern.post(URL(string: "/login")!)
+        RequestPattern(method: .POST, url: URL(string: "/login")!)
     }
 
-    var responseData: ResponseData {
+    var response: ResponseMock {
         switch self {
         case .success:
             let json: [String: Any] = [
@@ -79,9 +97,9 @@ enum LoginMock: RequestBagConvertible {
                     "expired_in": "123",
                 ]
             ]
-            return ResponseData(
-                statusCode: 200,
-                headerFields: ["Content-Type": "application/json"],
+            return ResponseMock(
+                status: 200,
+                headers: ["Content-Type": "application/json"],
                 body: try! JSONSerialization.data(withJSONObject: json))
 
         case .blockedUserError:
@@ -91,16 +109,16 @@ enum LoginMock: RequestBagConvertible {
                     "message": "user blocked"
                 ]
             ]
-            return ResponseData(
-                statusCode: 400,
-                headerFields: ["Content-Type": "application/json"],
+            return ResponseMock(
+                status: 400,
+                headers: ["Content-Type": "application/json"],
                 body: try! JSONSerialization.data(withJSONObject: json))
         }
     }
 }
 
 final class LoginUITests: XCTestCase {
-    
+
     private let catbird = Catbird()
     private var app: XCUIApplication!
 
@@ -115,7 +133,7 @@ final class LoginUITests: XCTestCase {
     }
 
     override func tearDown() {
-        XCTAssertNoThrow(try catbird.send(.clear), "Remove all requests")
+        XCTAssertNoThrow(try catbird.send(.removeAll), "Remove all requests")
         super.tearDown()
     }
 
@@ -128,7 +146,7 @@ final class LoginUITests: XCTestCase {
         app.secureTextFields["password"].typeText("qwerty")
         app.buttons["Done"].tap()
 
-        wait(forElement: app.staticTexts["Main Screen"])
+        XCTAssert(app.staticTexts["Main Screen"].waitForExistence(timeout: 3))
     }
 
     func testBlockedUserError() {
@@ -140,15 +158,7 @@ final class LoginUITests: XCTestCase {
         app.secureTextFields["password"].typeText("burger")
         app.buttons["Done"].tap()
 
-        wait(forElement: app.alerts["Error"])
-    }
-}
-
-extension XCTestCase {
-    func wait(forElement element: XCUIElement, timeout: TimeInterval = 3.0) {
-        let predicate = NSPredicate(format: "exists == 1")
-        expectation(for: predicate, evaluatedWith: element)
-        waitForExpectations(timeout: timeout)
+        XCTAssert(app.alerts["Error"].waitForExistence(timeout: 3))
     }
 }
 ```
@@ -163,7 +173,7 @@ Three types of patterns can be used:
 - `wildcard` - the request value match with the wildcard pattern (see below),
 - `regexp` - the request value match with the regular expression pattern.
 
-##### Note: 
+##### Note:
 If you want to apply a wildcard pattern for the url query parameters, don't forget escape `?` symbol after domain or path.
 
 ```swift
@@ -180,7 +190,7 @@ The following characters have special magic meaning when used in a pattern:
 
 - `*` matches 0 or more characters
 - `?` matches 1 character
-- `[a-z]` matches a range of characters, similar to a RegExp range. 
+- `[a-z]` matches a range of characters, similar to a RegExp range.
 - `{bar,baz}` matches one of the substitution listed in braces. For example pattern  `foo{bar,baz}` matches strings `foobar` or `foobaz`
 
 You can escape special characters with backslash `\`.

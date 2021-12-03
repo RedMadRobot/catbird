@@ -1,0 +1,30 @@
+name: Release
+on:
+  release:
+    types:
+      - published
+jobs:
+  release:
+    name: Publish release
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: make release
+      - name: Archive
+        run: make archive
+      - name: Upload GitHub Release Assets
+        run: gh release upload ${{ github.event.release.tag_name }} catbird.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Cocoapods
+        run: bundle install
+      - name: Deploy to Cocoapods
+        run: bundle exec pod trunk push Catbird.podspec
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+      - name: Brew bump formula
+        run: gh workflow run bump-formula.yml --repo RedMadRobot/homebrew-formulae --field formula=catbird --field version=${{ github.event.release.tag_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_TOKEN }}

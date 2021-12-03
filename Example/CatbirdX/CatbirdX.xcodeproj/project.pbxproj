@@ -12,7 +12,7 @@
 		0103207922C4BC08007077E5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0103207722C4BC08007077E5 /* Main.storyboard */; };
 		0103207B22C4BC09007077E5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0103207A22C4BC09007077E5 /* Assets.xcassets */; };
 		0103207E22C4BC09007077E5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0103207C22C4BC09007077E5 /* LaunchScreen.storyboard */; };
-		0103208922C4BC09007077E5 /* CatbirdXUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0103208822C4BC09007077E5 /* CatbirdXUITests.swift */; };
+		0103208922C4BC09007077E5 /* LoginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0103208822C4BC09007077E5 /* LoginTests.swift */; };
 		02A487C122CA06E300C4B5E6 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02A487C022CA06E300C4B5E6 /* MainViewController.swift */; };
 		02A487CA22CA22B700C4B5E6 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02A487C922CA22B700C4B5E6 /* AuthService.swift */; };
 		2DD73B7BB343A1C553A03A0F /* Pods_CatbirdXUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 087DABA571D7BB74702AE2A8 /* Pods_CatbirdXUITests.framework */; };
@@ -38,7 +38,7 @@
 		0103207D22C4BC09007077E5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0103207F22C4BC09007077E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0103208422C4BC09007077E5 /* CatbirdXUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CatbirdXUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0103208822C4BC09007077E5 /* CatbirdXUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatbirdXUITests.swift; sourceTree = "<group>"; };
+		0103208822C4BC09007077E5 /* LoginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginTests.swift; sourceTree = "<group>"; };
 		0103208A22C4BC09007077E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		02A487C022CA06E300C4B5E6 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		02A487C922CA22B700C4B5E6 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
@@ -108,7 +108,7 @@
 		0103208722C4BC09007077E5 /* CatbirdXUITests */ = {
 			isa = PBXGroup;
 			children = (
-				0103208822C4BC09007077E5 /* CatbirdXUITests.swift */,
+				0103208822C4BC09007077E5 /* LoginTests.swift */,
 				0103208A22C4BC09007077E5 /* Info.plist */,
 			);
 			path = CatbirdXUITests;
@@ -321,7 +321,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0103208922C4BC09007077E5 /* CatbirdXUITests.swift in Sources */,
+				0103208922C4BC09007077E5 /* LoginTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
