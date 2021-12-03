@@ -1,4 +1,4 @@
-import Foundation
+import Vapor
 
 /// Application configuration.
 public struct AppConfiguration {
@@ -44,5 +44,55 @@ extension AppConfiguration {
             return AppConfiguration(mode: .write(url), mocksDirectory: mocksDirectory, maxBodySize: maxBodySize)
         }
         return AppConfiguration(mode: .read, mocksDirectory: mocksDirectory, maxBodySize: maxBodySize)
+    }
+}
+
+struct Config {
+    @AppEnv("CATBIRD_RECORDING_ON")
+    var recordingMode: Bool = false
+
+    @AppEnv("CATBIRD_PROXY")
+    var proxyEnabled: Bool = false
+
+    @AppEnv("CATBIRD_MOCKS_DIR", transform: { URL(string: $0) })
+    var mocksDirectory: URL? = nil
+
+    @AppEnv("CATBIRD_REDIRECT_URL", transform: { URL(string: $0) })
+    var redirectUrl: URL? = nil
+
+    @AppEnv("CATBIRD_MAX_BODY_SIZE", transform: { ByteCount(stringLiteral: $0) })
+    var maxBodySize: ByteCount = "50mb"
+}
+
+/// Application env variable.
+@propertyWrapper
+struct AppEnv<Value> {
+    let wrappedValue: Value
+
+    /// A new application env variable.
+    ///
+    /// - Parameters:
+    ///   - wrappedValue: Default value.
+    ///   - key: Env variable name.
+    ///   - transform: Transform env variable string if present.
+    init(wrappedValue: Value, _ key: String, transform: (String) -> Value?) {
+        self.wrappedValue = ProcessInfo.processInfo.environment[key].flatMap(transform) ?? wrappedValue
+    }
+}
+
+extension AppEnv where Value == String {
+    init(wrappedValue: String, _ key: String) {
+        self.init(wrappedValue: wrappedValue, key, transform: { (value: String) -> String? in
+            return value
+        })
+    }
+}
+
+extension AppEnv where Value == Bool {
+    init(wrappedValue: Bool, _ key: String) {
+        self.init(wrappedValue: wrappedValue, key, transform: { (value: String) -> Bool? in
+            let string = value.lowercased()
+            return string == "1" || string == "yes" || string == "true"
+        })
     }
 }
