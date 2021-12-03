@@ -3,8 +3,8 @@ import XCTVapor
 
 extension Application {
 
-    func perform(_ action: CatbirdAction, file: StaticString = #file, line: UInt = #line) throws {
-        let request = try action.makeRequest(to: URL(string: "/")!)
+    func perform(_ action: CatbirdAction, parallelId: String? = nil, file: StaticString = #file, line: UInt = #line) throws {
+        let request = try action.makeRequest(to: URL(string: "/")!, parallelId: parallelId)
         let method = try XCTUnwrap(request.httpMethod.map { HTTPMethod(rawValue: $0) }, file: file, line: line)
         let path = try XCTUnwrap(request.url?.path, file: file, line: line)
         var headers = HTTPHeaders()

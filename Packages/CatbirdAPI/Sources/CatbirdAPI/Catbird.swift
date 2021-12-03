@@ -6,9 +6,6 @@ public final class Catbird {
     /// Localhost IPv4 representation.
     public static let localhost = URL(string: "http://127.0.0.1:8080")!
 
-    /// Session ID header name.
-    public static let sessionId = "X-Catbird-Session-Id"
-
     /// Default network session.
     public static var session: URLSession {
         let configuration = URLSessionConfiguration.ephemeral
@@ -24,9 +21,13 @@ public final class Catbird {
     /// Network session.
     private let session: URLSession
 
-    public init(url: URL = localhost, session: URLSession = session) {
+    /// Unique catbird id for parallel test running.
+    public var parallelId: String?
+
+    public init(url: URL = localhost, session: URLSession = session, parallelId: String? = nil) {
         self.url = url
         self.session = session
+        self.parallelId = parallelId
     }
 
     // MARK: - Public
@@ -39,7 +40,7 @@ public final class Catbird {
     /// - Returns: Session task.
     @discardableResult
     public func send(_ action: CatbirdAction, completion: @escaping (Error?) -> Void) -> URLSessionTask {
-        let request = try! action.makeRequest(to: url)
+        let request = try! action.makeRequest(to: url, parallelId: parallelId)
         return dataTask(request, completion: completion)
     }
 

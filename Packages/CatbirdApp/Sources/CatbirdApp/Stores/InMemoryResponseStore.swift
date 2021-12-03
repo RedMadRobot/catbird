@@ -34,9 +34,12 @@ final class InMemoryResponseStore: ResponseStore {
     }
 
     func perform(_ action: CatbirdAction, for request: Request) -> EventLoopFuture<Response> {
+        let parallelId = request.headers.first(name: CatbirdAction.parallelIdHeaderField)
+
         let status = _queue.sync { () -> HTTPStatus in
             switch action {
-            case .update(let pattern, let mock):
+            case .update(var pattern, let mock):
+                pattern.setParallelId(parallelId)
                 let item = ResponseStoreItem(pattern: pattern, mock: mock)
                 if let index = _items.firstIndex(where: { $0.pattern == pattern })  {
                     _items[index] = item
@@ -44,15 +47,33 @@ final class InMemoryResponseStore: ResponseStore {
                     _items.append(item)
                 }
                 return .created
-            case .remove(let pattern):
+            case .remove(var pattern):
+                pattern.setParallelId(parallelId)
                 _items.removeAll(where: { $0.pattern == pattern })
                 return .noContent
             case .removeAll:
-                _items.removeAll(keepingCapacity: true)
+                _removeAll(parallelId: parallelId)
                 return .noContent
             }
         }
         return request.eventLoop.makeSucceededFuture(Response(status: status))
     }
 
+    // MARK: - Private
+
+    private func _removeAll(parallelId: String?) {
+        if let parallelId = parallelId {
+            _items.removeAll(where: { item in
+                item.pattern.headers[CatbirdAction.parallelIdHeaderField]?.match(parallelId) == true
+            })
+        } else {
+            _items.removeAll(keepingCapacity: true)
+        }
+    }
+}
+
+extension RequestPattern {
+    fileprivate mutating func setParallelId(_ parallelId: String?) {
+        headers[CatbirdAction.parallelIdHeaderField] = parallelId.map(PatternMatch.equal)
+    }
 }

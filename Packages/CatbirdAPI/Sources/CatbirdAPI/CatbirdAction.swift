@@ -45,16 +45,22 @@ extension CatbirdAction {
 // MARK: - CatbirdAction + URLRequest
 
 extension CatbirdAction {
+    /// Header name for parallel ID.
+    public static let parallelIdHeaderField = "X-Catbird-Parallel-Id"
+
     private static let encoder = JSONEncoder()
 
     /// Create a new `URLRequest`.
     ///
     /// - Parameter url: Catbird server base url.
     /// - Returns: Request to mock server.
-    func makeRequest(to url: URL) throws -> URLRequest {
+    func makeRequest(to url: URL, parallelId: String? = nil) throws -> URLRequest {
         var request = URLRequest(url: url.appendingPathComponent("catbird/api/mocks"))
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let parallelId = parallelId {
+            request.addValue(parallelId, forHTTPHeaderField: CatbirdAction.parallelIdHeaderField)
+        }
         request.httpBody = try CatbirdAction.encoder.encode(self)
         return request
     }
@@ -70,14 +76,14 @@ enum CatbirdActionType: String, Codable {
 }
 
 extension CatbirdAction: Codable {
-    enum CondingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case type
         case pattern
         case response
     }
 
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CondingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(CatbirdActionType.self, forKey: .type)
 
         switch type {
@@ -94,7 +100,7 @@ extension CatbirdAction: Codable {
     }
 
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CondingKeys.self)
+        var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .update(let pattern, let response):
             try container.encode(CatbirdActionType.update, forKey: .type)

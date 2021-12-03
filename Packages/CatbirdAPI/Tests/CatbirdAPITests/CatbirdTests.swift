@@ -73,6 +73,29 @@ final class CatbirdTests: XCTestCase {
         XCTAssertEqual(requests.first, try action.makeRequest(to: url))
     }
 
+    func testParallelId() {
+        // Given
+        let parallelId = name
+        catbird.parallelId = parallelId
+        let actions: [CatbirdAction] = [
+            CatbirdAction.remove(BookMock.first),
+            CatbirdAction.remove(BookMock.first),
+            CatbirdAction.removeAll
+        ]
+        Network.result = .success(response(status: 200))
+
+        // When
+        for action in actions {
+            XCTAssertNoThrow(try catbird.send(action))
+        }
+
+        // Then
+        XCTAssertEqual(requests.count, 3)
+        XCTAssertEqual(requests, try actions.map { action in
+            try action.makeRequest(to: url, parallelId: parallelId)
+        })
+    }
+
     @available(iOS 7, macOS 10.13, *)
     func testURLError() {
         // Given
