@@ -16,7 +16,7 @@ read -s -p  "Password: " password
 openssl genrsa -aes256 -passout pass:"$password" -out key.pem 2048
 
 # Generate the self-signed certificate and private key
-openssl req -x509 -new -nodes -passin pass:"$password" -config cert.config -key key.pem -sha256 -extensions v3_ca -days 365 -out root-ca.pem
+openssl req -x509 -new -nodes -passin pass:"$password" -config "$CONFIG_FILE" -key key.pem -sha256 -extensions v3_ca -days 365 -out root-ca.pem
 
 # Cleanup
 rm key.pem
