@@ -229,9 +229,9 @@ You can view a list of all intercepted requests on the page http://127.0.0.1:808
 
 ## Parallel testing
 
-For parallel testing , you need to fulfill several conditions.
+For parallel testing you need to fulfill several conditions.
 
-- Create a Catbird instance for each test case or test with a unique `parallelId` identifier.
+- Create a `Catbird` instance for each test case or test method with a unique `parallelId` identifier.
 - Pass `parallelId` to the application.
 - Add `parallelId` as **X-Catbird-Parallel-Id** to each request header in application.
 
