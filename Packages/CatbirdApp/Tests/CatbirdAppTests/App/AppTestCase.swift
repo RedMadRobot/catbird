@@ -39,4 +39,8 @@ class RequestTestCase: AppTestCase {
         let eventLoop = app.eventLoopGroup.next()
         request = Request(application: app, on: eventLoop)
     }
+
+    func makeRequest() -> Request {
+        Request(application: app, on: app.eventLoopGroup.next())
+    }
 }

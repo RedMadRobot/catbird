@@ -6,6 +6,7 @@ import XCTest
 final class InMemoryResponseStoreTests: RequestTestCase {
 
     private var store: InMemoryResponseStore!
+    private var parallelId: String { name }
 
     override func setUp() {
         super.setUp()
@@ -13,7 +14,11 @@ final class InMemoryResponseStoreTests: RequestTestCase {
         XCTAssertEqual(store.items, [])
     }
 
-    private func perform(_ action: CatbirdAction, file: StaticString = #file, line: UInt = #line) {
+    private func perform(_ action: CatbirdAction, parallelId: String? = nil, file: StaticString = #file, line: UInt = #line) {
+        let request = makeRequest()
+        if let parallelId = parallelId {
+            request.headers.add(name: "X-Catbird-Parallel-Id", value: parallelId)
+        }
         let future = store.perform(action, for: request)
         XCTAssertEqual(try future.wait().status, action.expectedStatus, file: file, line: line)
     }
@@ -32,6 +37,22 @@ final class InMemoryResponseStoreTests: RequestTestCase {
         XCTAssertEqual(store.items, mocks.map(\.item))
     }
 
+    func testPerformAddWithParallelId() throws {
+        // Given
+        let mocks = BookMock.mocks
+        mocks.forEach { perform(.add($0)) }
+        var items = BookMock.mocks.map(\.item)
+
+        // When
+        let createA = BookMock.create(name: "A")
+        perform(.add(createA), parallelId: parallelId)
+        items.append(createA.item(parallelId: parallelId))
+
+        // Then
+        XCTAssertEqual(store.items.count, 5)
+        XCTAssertEqual(store.items, items)
+    }
+
     func testPerformUpdate() {
         // Given
         let createA = BookMock.create(name: "A")
@@ -43,6 +64,24 @@ final class InMemoryResponseStoreTests: RequestTestCase {
 
         // Then
         XCTAssertEqual(store.items, [createA.item])
+    }
+
+    func testPerformUpdateWithParallelId() {
+        // Given
+        let createA = BookMock.create(name: "A")
+        let createB = BookMock.create(name: "B")
+        perform(.add(createA))
+        perform(.add(createB), parallelId: parallelId)
+
+
+        // When
+        perform(.add(createA), parallelId: parallelId)
+
+        // Then
+        XCTAssertEqual(store.items, [
+            createA.item,
+            createA.item(parallelId: name)
+        ])
     }
 
     func testPerformRemove() {
@@ -59,15 +98,42 @@ final class InMemoryResponseStoreTests: RequestTestCase {
         XCTAssertEqual(store.items, [second.item])
     }
 
+    func testPerformRemoveWithParallelId() {
+        // Given
+        let first = BookMock.first
+        perform(.add(first))
+        perform(.add(first), parallelId: parallelId)
+
+        // When
+        perform(.remove(first), parallelId: parallelId)
+
+        // Then
+        XCTAssertEqual(store.items, [first.item])
+    }
+
     func testPerformRemoveAll() {
         // Given
         BookMock.mocks.forEach { perform(.add($0)) }
+        perform(.add(BookMock.create(name: "Z")), parallelId: parallelId)
 
         // When
         perform(.removeAll)
 
         // Then
         XCTAssertEqual(store.items, [])
+    }
+
+    func testPerformRemoveAllWithParallelId() {
+        // Given
+        BookMock.mocks.forEach { perform(.add($0)) }
+        perform(.add(BookMock.create(name: "1")), parallelId: parallelId)
+        perform(.add(BookMock.create(name: "2")), parallelId: parallelId)
+
+        // When
+        perform(.removeAll, parallelId: parallelId)
+
+        // Then
+        XCTAssertEqual(store.items.count, BookMock.mocks.count)
     }
 
     // MARK: - Response for Request

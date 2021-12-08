@@ -226,3 +226,34 @@ Without this, only error messages will be visible
 ## Web
 
 You can view a list of all intercepted requests on the page http://127.0.0.1:8080/catbird
+
+## Parallel testing
+
+For parallel testing you need to fulfill several conditions.
+
+- Create a `Catbird` instance for each test case or test method with a unique `parallelId` identifier.
+- Pass `parallelId` to the application.
+- Add `parallelId` as **X-Catbird-Parallel-Id** to each request header in application.
+
+```swift
+final class LoginUITests: XCTestCase {
+
+    private let catbird = Catbird(parallelId: UUID().uuidString)
+    private var app: XCUIApplication!
+
+    override func setUp() {
+        super.setUp()
+        continueAfterFailure = false
+        app = XCUIApplication()
+
+        app.launchArguments = [
+            // Base URL in app `UserDefaults.standard.url(forKey: "url_key")`
+            "-url_key", catbird.url.absoluteString,
+
+            // `parallelId` in app `UserDefaults.standard.url(forKey: "parallelId")`
+            "-parallelId", catbird.parallelId!
+        ]
+        app.launch()
+    }
+}
+```

@@ -49,4 +49,10 @@ enum BookMock: CatbirdMockConvertible {
     var item: ResponseStoreItem {
         ResponseStoreItem(pattern: pattern, mock: response)
     }
+
+    func item(parallelId: String) -> ResponseStoreItem {
+        var pattern = self.pattern
+        pattern.headers["X-Catbird-Parallel-Id"] = .equal(parallelId)
+        return ResponseStoreItem(pattern: pattern, mock: response)
+    }
 }
