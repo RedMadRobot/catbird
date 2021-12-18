@@ -21,8 +21,7 @@ final class FileResponseStore: ResponseStore {
         guard fileExists(atPath: path) else {
             return request.eventLoop.makeFailedFuture(Abort(.notFound))
         }
-//        let response = request.fileio.streamFile(at: path)
-        let response = Response(status: .ok)
+        let response = request.fileio.streamFile(at: path)
         return request.eventLoop.makeSucceededFuture(response)
     }
 

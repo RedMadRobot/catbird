@@ -37,11 +37,11 @@ extension HTTPHeaders {
 extension ClientResponse {
     /// Convert to Server Response.
     fileprivate func response(version: HTTPVersion) -> Response {
-//        let body = body.map { Response.Body(buffer: $0) } ?? .empty
-//        return Response(status: status, version: version, headers: headers, body: body)
+        let body = body.map { Response.Body(buffer: $0) } ?? .empty
+        return Response(status: status, version: version, headers: headers, body: body)
 
-        var headers = self.headers
-        headers.remove(name: .contentLength)
-        return Response(status: status, version: version, headers: headers, body: .empty)
+//        var headers = self.headers
+//        headers.remove(name: .contentLength)
+//        return Response(status: status, version: version, headers: headers, body: .empty)
     }
 }
