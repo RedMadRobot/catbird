@@ -1,15 +1,16 @@
+import Foundation
 import CatbirdAPI
 import Vapor
 import NIO
 
 final class FileResponseStore: ResponseStore {
     /// Path to the response body folder.
-    private let directory: URL
+    private let directory: FileDirectoryPath
 
     private let fileManger = FileManager.default
 
     init(directory: URL) {
-        self.directory = directory
+        self.directory = FileDirectoryPath(url: directory)
     }
 
     // MARK: - ResponseStore
@@ -17,8 +18,9 @@ final class FileResponseStore: ResponseStore {
     var items: [ResponseStoreItem] { [] }
 
     func response(for request: Request) -> EventLoopFuture<Response> {
-        let path = filePath(for: request)
-        guard fileExists(atPath: path) else {
+        guard let path = directory.fileURLs(for: request).map(\.absoluteString).first(where: {
+            fileExists(atPath: $0)
+        }) else {
             return request.eventLoop.makeFailedFuture(Abort(.notFound))
         }
         let response = request.fileio.streamFile(at: path)
@@ -30,32 +32,29 @@ final class FileResponseStore: ResponseStore {
         guard case .update(_, let response) = action, let body = response.body, !body.isEmpty else {
             return eventLoop.makeSucceededFuture(Response(status: .badRequest))
         }
-        let path = filePath(for: request)
+        let url = directory.preferredFileURL(for: request)
         do {
-            try createDirectories(for: path)
+            try createDirectories(for: url)
         } catch {
             return eventLoop.makeFailedFuture(error)
         }
-        return writeFile(data: body, at: path, request: request)
+        return writeFile(data: body, at: url.absoluteString, request: request)
             .map { _ in Response(status: .created) }
     }
 
     // MARK: - Private
-
-    private func filePath(for request: Request) -> String {
-        return directory.absoluteString + request.url.path
-    }
 
     private func fileExists(atPath path: String) -> Bool {
         var isDirectory: ObjCBool = false
         return fileManger.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory.boolValue
     }
 
-    private func createDirectories(for filePath: String) throws {
-        let url = URL(fileURLWithPath: filePath, isDirectory: false)
+    private func createDirectories(for fileUrl: URL) throws {
+        assert(!fileUrl.hasDirectoryPath)
         // Remove file name
-        let dir = url.deletingLastPathComponent()
-        try fileManger.createDirectory(at: dir, withIntermediateDirectories: true)
+        let path = fileUrl.deletingLastPathComponent().absoluteString
+        let url = URL(fileURLWithPath: path, isDirectory: true)
+        try fileManger.createDirectory(at: url, withIntermediateDirectories: true)
     }
 
     private func writeFile(data: Data, at path: String, request: Request) -> EventLoopFuture<Void> {
