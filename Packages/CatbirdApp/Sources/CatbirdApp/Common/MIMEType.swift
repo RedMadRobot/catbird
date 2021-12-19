@@ -3,15 +3,11 @@ import Foundation
 import CoreServices
 import UniformTypeIdentifiers
 
-struct MIMEType: LosslessStringConvertible, Equatable {
-    let string: String
+struct MIMEType: Equatable {
+    private let string: String
 
     init(_ string: String) {
         self.string = string
-    }
-
-    var description: String {
-        "MIMEType(\(string))"
     }
 
     var preferredFilenameExtension: String? {
