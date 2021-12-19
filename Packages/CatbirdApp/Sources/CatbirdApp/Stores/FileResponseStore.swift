@@ -18,7 +18,7 @@ final class FileResponseStore: ResponseStore {
     var items: [ResponseStoreItem] { [] }
 
     func response(for request: Request) -> EventLoopFuture<Response> {
-        guard let path = directory.fileURLs(for: request).map(\.absoluteString).first(where: {
+        guard let path = directory.filePaths(for: request).first(where: {
             fileExists(atPath: $0)
         }) else {
             return request.eventLoop.makeFailedFuture(Abort(.notFound))

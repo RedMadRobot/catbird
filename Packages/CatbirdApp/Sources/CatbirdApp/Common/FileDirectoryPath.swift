@@ -2,40 +2,34 @@ import Foundation
 import Vapor
 
 struct FileDirectoryPath {
-    let url: URL
+    private let url: URL
 
     init(url: URL) {
         self.url = url
     }
 
-    init(_ path: String) {
-        self.url = URL(fileURLWithPath: path, isDirectory: true)
-    }
-
     func preferredFileURL(for request: Request) -> URL {
-        var url = self.url.appendingPathComponent(request.url.string)
+        var fileUrl = url.appendingPathComponent(request.url.string)
 
-        guard url.pathExtension.isEmpty else {
-            return url
+        guard fileUrl.pathExtension.isEmpty else {
+            return fileUrl
         }
         if let filenameExtension = request.accept.first?.preferredFilenameExtension {
-            url.appendPathExtension(filenameExtension)
+            fileUrl.appendPathExtension(filenameExtension)
         }
-        return url
+        return fileUrl
     }
 
-    func fileURLs(for request: Request) -> [URL] {
-        let url = self.url.appendingPathComponent(request.url.string)
+    func filePaths(for request: Request) -> [String] {
+        let fileUrl = url.appendingPathComponent(request.url.string)
 
-        guard url.pathExtension.isEmpty else {
-            return [url]
+        var urls: [URL] = []
+        if fileUrl.pathExtension.isEmpty {
+            urls = request.accept
+                .compactMap { $0.preferredFilenameExtension }
+                .map { fileUrl.appendingPathExtension($0) }
         }
-
-        var urls: [URL] = request.accept
-            .compactMap { $0.preferredFilenameExtension }
-            .map { url.appendingPathExtension($0) }
-
-        urls.append(url)
-        return urls
+        urls.append(fileUrl)
+        return urls.map { $0.absoluteString }
     }
 }
