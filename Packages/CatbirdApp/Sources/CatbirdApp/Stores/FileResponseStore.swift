@@ -1,6 +1,7 @@
 import CatbirdAPI
 import Vapor
 import NIO
+import Foundation
 
 final class FileResponseStore: ResponseStore {
     /// Path to the response body folder.
@@ -21,7 +22,13 @@ final class FileResponseStore: ResponseStore {
         guard fileExists(atPath: path) else {
             return request.eventLoop.makeFailedFuture(Abort(.notFound))
         }
-        let response = request.fileio.streamFile(at: path)
+        let realFilePath: String
+        if fileIsSymlink(atPath: path) {
+            realFilePath = destinationOfSymlink(atPath: path)
+        } else {
+            realFilePath = path
+        }
+        let response = request.fileio.streamFile(at: realFilePath)
         return request.eventLoop.makeSucceededFuture(response)
     }
 
@@ -49,6 +56,31 @@ final class FileResponseStore: ResponseStore {
     private func fileExists(atPath path: String) -> Bool {
         var isDirectory: ObjCBool = false
         return fileManger.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory.boolValue
+    }
+
+    private func fileIsSymlink(atPath path: String) -> Bool {
+        guard let fileAttributes = try? fileManger.attributesOfItem(atPath: path) else {
+            return false
+        }
+        guard fileAttributes[.type] as? FileAttributeType == .typeSymbolicLink else {
+            return false
+        }
+        return true
+    }
+
+    private func destinationOfSymlink(atPath path: String) -> String {
+        guard let symLinkDestination = try? fileManger.destinationOfSymbolicLink(atPath: path) else {
+            return path
+        }
+        if fileExists(atPath: symLinkDestination) {
+            return symLinkDestination
+        }
+        let basePath = (path as NSString).deletingLastPathComponent as NSString
+        let symlinkFullPath = basePath.appendingPathComponent(symLinkDestination)
+        guard fileExists(atPath: symlinkFullPath) else {
+            return path
+        }
+        return symlinkFullPath
     }
 
     private func createDirectories(for filePath: String) throws {
