@@ -85,8 +85,12 @@ public func configure(_ app: Application, _ configuration: AppConfiguration) thr
         app.middleware.use(AnyMiddleware.notFound(inMemoryStore.response))
     case .write(let url):
         app.logger.info("Write mode")
+        app.http.client.configuration.decompression = .enabled(limit: .none)
         // capture response and write to file
         app.middleware.use(AnyMiddleware.capture { request, response in
+            if response.headers.contains(name: "Content-encoding") {
+                response.headers.remove(name: "Content-encoding")
+            }
             let pattern = RequestPattern(method: .init(request.method.rawValue), url: request.url.string)
             let mock = ResponseMock(status: Int(response.status.code), body: response.body.data)
             return fileStore.perform(.update(pattern, mock), for: request).map { _ in response }
