@@ -40,7 +40,7 @@ class RequestTestCase: AppTestCase {
         request = Request(application: app, on: eventLoop)
     }
 
-    func makeRequest(headers: HTTPHeaders = [:]) -> Request {
-        Request(application: app, headers: headers, on: app.eventLoopGroup.next())
+    func makeRequest(url: URI = "/", headers: HTTPHeaders = [:]) -> Request {
+        Request(application: app, url: url, headers: headers, on: app.eventLoopGroup.next())
     }
 }
