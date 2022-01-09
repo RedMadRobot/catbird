@@ -36,7 +36,7 @@ final class AppTests: AppTestCase {
 
         // Then
         for joke in api.jokes {
-            let path = mocksDirectory + joke.path
+            let path = mocksDirectory + joke.path + ".txt"
             XCTAssertEqual(try String(contentsOfFile: path), joke.text, """
             The joke by \(joke.id) was saved to a file at path \(path)
             """)
