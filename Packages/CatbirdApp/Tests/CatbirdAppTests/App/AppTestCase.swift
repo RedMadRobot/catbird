@@ -9,10 +9,12 @@ class AppTestCase: XCTestCase {
         willSet { app?.shutdown() }
     }
 
-    func setUpApp(mode: AppConfiguration.Mode) throws {
+    func setUpApp(redirectUrl: URL?) throws {
         let config = AppConfiguration(
-            mode: mode,
+            isRecordMode: redirectUrl != nil,
+            proxyEnabled: false,
             mocksDirectory: URL(string: mocksDirectory)!,
+            redirectUrl: redirectUrl,
             maxBodySize: "50kb")
         app = Application(.testing)
         try configure(app, config)
@@ -20,7 +22,7 @@ class AppTestCase: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        XCTAssertNoThrow(try setUpApp(mode: .read))
+        XCTAssertNoThrow(try setUpApp(redirectUrl: nil))
         XCTAssertEqual(app.routes.defaultMaxBodySize, 51200)
     }
 

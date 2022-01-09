@@ -14,7 +14,7 @@ final class AppTests: AppTestCase {
     func testWriteFileMock() throws {
         // Given
         let api = JokeAPI()
-        XCTAssertNoThrow(try setUpApp(mode: .write(api.host)), """
+        XCTAssertNoThrow(try setUpApp(redirectUrl: api.host), """
         Launch the app in redirect mode to \(api.host) and write files to a folder \(mocksDirectory)
         """)
         addTeardownBlock {
