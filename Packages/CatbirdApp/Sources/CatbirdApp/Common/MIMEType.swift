@@ -1,7 +1,13 @@
 import Vapor
 import Foundation
+
+#if canImport(CoreServices)
 import CoreServices
+#endif
+
+#if canImport(UniformTypeIdentifiers)
 import UniformTypeIdentifiers
+#endif
 
 struct MIMEType: Equatable {
     private let string: String
@@ -11,11 +17,15 @@ struct MIMEType: Equatable {
     }
 
     var preferredFilenameExtension: String? {
+#if os(Linux)
+        return nil
+#else
         if #available(macOS 11.0, *) {
             return UTType(mimeType: string)?.preferredFilenameExtension
         } else {
             return _UTType(mimeType: string)?.preferredFilenameExtension
         }
+#endif
     }
 }
 
