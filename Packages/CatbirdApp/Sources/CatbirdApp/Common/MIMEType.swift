@@ -37,13 +37,20 @@ extension Vapor.Request {
 
 #if os(Linux)
 private struct _UTType {
+    private static let filenameExtension: [String: String] = [
+        "application/json": "json",
+        "text/html": "html",
+        "text/plain": "txt"
+    ]
 
     var preferredFilenameExtension: String? {
-        return nil
+        Self.filenameExtension[mimeType]
     }
 
+    private let mimeType: String
+
     init?(mimeType: String) {
-        return nil
+        self.mimeType = mimeType
     }
 }
 #else
