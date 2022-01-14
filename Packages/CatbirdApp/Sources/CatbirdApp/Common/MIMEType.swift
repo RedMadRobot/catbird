@@ -18,7 +18,7 @@ struct MIMEType: Equatable {
 
     var preferredFilenameExtension: String? {
 #if os(Linux)
-        return nil
+        return _UTType(mimeType: string)?.preferredFilenameExtension
 #else
         if #available(macOS 11.0, *) {
             return UTType(mimeType: string)?.preferredFilenameExtension
@@ -35,6 +35,18 @@ extension Vapor.Request {
     }
 }
 
+#if os(Linux)
+private struct _UTType {
+
+    var preferredFilenameExtension: String? {
+        return nil
+    }
+
+    init?(mimeType: String) {
+        return nil
+    }
+}
+#else
 private struct _UTType {
     private let identifier: CFString
 
@@ -57,3 +69,4 @@ private struct _UTType {
         UTTypeCopyPreferredTagWithClass(identifier, tagClass)?.takeRetainedValue() as String?
     }
 }
+#endif
