@@ -11,7 +11,7 @@ on:
       - '**'
 
 jobs:
-  test:
+  test-macos:
     name: Test on macOS
     runs-on: macOS-latest
     steps:
@@ -20,7 +20,7 @@ jobs:
       - name: Build and test
         run: make test
   test-linux:
-    name: Test on sLinux
+    name: Test on Linux
     runs-on: ubuntu-20.04
     container:
       image: swift:5.5.1-focal
