@@ -173,7 +173,6 @@ final class AppTests: AppTestCase {
 
         try app.test(.GET, "/api/books/zero") { response in
             XCTAssertEqual(response.status.code, 404)
-            XCTAssertEqual(response.body.string, "{\"error\":true,\"reason\":\"Not Found\"}")
         }
 
         // When
@@ -187,7 +186,6 @@ final class AppTests: AppTestCase {
 
         try app.test(.GET, "/api/books/zero") { response in
             XCTAssertEqual(response.status.code, 404)
-            XCTAssertEqual(response.body.string, "{\"error\":true,\"reason\":\"Not Found\"}")
         }
     }
 
