@@ -16,6 +16,9 @@ let package = Package(
         // Templete engine
         .package(url: "https://github.com/stencilproject/Stencil.git", from: "0.14.0"),
 
+        // macOS system logger
+        .package(url: "https://github.com/Alexander-Ignition/OSLogging", from: "1.0.0"),
+
         // CatbirdAPI
         .package(name: "Catbird", path: "../../")
     ],
@@ -25,6 +28,7 @@ let package = Package(
             .product(name: "CatbirdAPI", package: "Catbird"),
             .product(name: "Vapor", package: "vapor"),
             .product(name: "Stencil", package: "Stencil"),
+            .product(name: "OSLogging", package: "OSLogging"),
         ]),
         .testTarget(name: "CatbirdAppTests", dependencies: [
             .target(name: "CatbirdApp"),
