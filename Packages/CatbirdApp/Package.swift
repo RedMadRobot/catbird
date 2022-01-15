@@ -17,7 +17,7 @@ let package = Package(
         .package(url: "https://github.com/stencilproject/Stencil.git", from: "0.14.0"),
 
         // macOS system logger
-        .package(url: "https://github.com/Alexander-Ignition/OSLogging", from: "1.0.0"),
+        .package(url: "https://github.com/Alexander-Ignition/OSLogging", from: "1.0.3"),
 
         // CatbirdAPI
         .package(name: "Catbird", path: "../../")
