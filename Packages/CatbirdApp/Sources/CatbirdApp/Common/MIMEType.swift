@@ -1,7 +1,13 @@
 import Vapor
 import Foundation
+
+#if canImport(CoreServices)
 import CoreServices
+#endif
+
+#if canImport(UniformTypeIdentifiers)
 import UniformTypeIdentifiers
+#endif
 
 struct MIMEType: Equatable {
     private let string: String
@@ -11,11 +17,15 @@ struct MIMEType: Equatable {
     }
 
     var preferredFilenameExtension: String? {
+#if os(Linux)
+        return _UTType(mimeType: string)?.preferredFilenameExtension
+#else
         if #available(macOS 11.0, *) {
             return UTType(mimeType: string)?.preferredFilenameExtension
         } else {
             return _UTType(mimeType: string)?.preferredFilenameExtension
         }
+#endif
     }
 }
 
@@ -25,6 +35,25 @@ extension Vapor.Request {
     }
 }
 
+#if os(Linux)
+private struct _UTType {
+    private static let filenameExtension: [String: String] = [
+        "application/json": "json",
+        "text/html": "html",
+        "text/plain": "txt"
+    ]
+
+    var preferredFilenameExtension: String? {
+        Self.filenameExtension[mimeType]
+    }
+
+    private let mimeType: String
+
+    init?(mimeType: String) {
+        self.mimeType = mimeType
+    }
+}
+#else
 private struct _UTType {
     private let identifier: CFString
 
@@ -47,3 +76,4 @@ private struct _UTType {
         UTTypeCopyPreferredTagWithClass(identifier, tagClass)?.takeRetainedValue() as String?
     }
 }
+#endif

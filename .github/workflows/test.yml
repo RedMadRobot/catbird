@@ -11,11 +11,21 @@ on:
       - '**'
 
 jobs:
-  test:
-    name: Run tests
+  test-macos:
+    name: Test on macOS
     runs-on: macOS-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build and test
         run: make test
+  test-linux:
+    name: Test on Linux
+    runs-on: ubuntu-20.04
+    container:
+      image: swift:5.5.1-focal
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test catbird app
+        run: swift test --package-path Packages/CatbirdApp --disable-automatic-resolution
