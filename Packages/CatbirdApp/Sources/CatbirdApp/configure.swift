@@ -34,6 +34,9 @@ public func configure(_ app: Application, _ configuration: AppConfiguration) thr
     // Pubic resource for web page
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
+    if configuration.proxyEnabled {
+        app.middleware.use(ProxyMiddleware()) // catch 404
+    }
     if configuration.isRecordMode {
         app.logger.info("Record mode")
         app.http.client.configuration.decompression = .enabled(limit: .none)
@@ -55,9 +58,6 @@ public func configure(_ app: Application, _ configuration: AppConfiguration) thr
     }
     if let url = configuration.redirectUrl {
         app.middleware.use(RedirectMiddleware(serverURL: url))
-    }
-    if configuration.proxyEnabled {
-        app.middleware.use(ProxyMiddleware())
     }
 
     // MARK: - Register Routes
