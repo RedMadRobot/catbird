@@ -33,10 +33,6 @@ public func configure(_ app: Application, _ configuration: AppConfiguration) thr
 
     // Pubic resource for web page
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
-
-    if configuration.proxyEnabled {
-        app.middleware.use(ProxyMiddleware()) // catch 404
-    }
     if configuration.isRecordMode {
         app.logger.info("Record mode")
         app.http.client.configuration.decompression = .enabled(limit: .none)
@@ -49,8 +45,16 @@ public func configure(_ app: Application, _ configuration: AppConfiguration) thr
             let mock = ResponseMock(status: Int(response.status.code), body: response.body.data)
             return fileStore.perform(.update(pattern, mock), for: request).map { _ in response }
         })
+        // catch 404 and try read from real server
+        if configuration.proxyEnabled {
+            app.middleware.use(ProxyMiddleware())
+        }
     } else {
         app.logger.info("Read mode")
+        // catch 404 and try read from real server
+        if configuration.proxyEnabled {
+            app.middleware.use(ProxyMiddleware())
+        }
         // try read from static mocks if route not found
         app.middleware.use(AnyMiddleware.notFound(fileStore.response))
         // try read from dynamic mocks

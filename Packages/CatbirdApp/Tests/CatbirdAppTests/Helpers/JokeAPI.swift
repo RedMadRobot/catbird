@@ -1,5 +1,11 @@
 import CatbirdApp
 import Vapor
+import Foundation
+
+/*
+ curl http://icanhazdadjoke.com/j/R7UfaahVfFd
+ curl http://icanhazdadjoke.com/j/R7UfaahVfFd --proxy http://127.0.0.1:8080
+ */
 
 /// https://icanhazdadjoke.com/api
 struct JokeAPI {
@@ -9,8 +15,11 @@ struct JokeAPI {
         var path: String { "/j/\(id)" }
     }
 
+    /// API url.
+    let url = URL(string: "https://icanhazdadjoke.com")!
+
     /// API host.
-    let host = URL(string: "https://icanhazdadjoke.com")!
+    var host: String { url.host! }
 
     /// API root directory.
     let root = "/j"
@@ -31,5 +40,4 @@ struct JokeAPI {
             id: "0ozAXv4Mmjb",
             text: "Why did the tomato blush? Because it saw the salad dressing.")
     ]
-
 }

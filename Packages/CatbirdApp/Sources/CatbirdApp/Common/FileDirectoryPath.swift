@@ -9,7 +9,7 @@ struct FileDirectoryPath {
     }
 
     func preferredFileURL(for request: Request) -> URL {
-        var fileUrl = url.appendingPathComponent(request.url.string)
+        var fileUrl = fileURL(for: request)
 
         guard fileUrl.pathExtension.isEmpty else {
             return fileUrl
@@ -21,7 +21,7 @@ struct FileDirectoryPath {
     }
 
     func filePaths(for request: Request) -> [String] {
-        let fileUrl = url.appendingPathComponent(request.url.string)
+        let fileUrl = fileURL(for: request)
 
         var urls: [URL] = []
         if fileUrl.pathExtension.isEmpty {
@@ -31,5 +31,17 @@ struct FileDirectoryPath {
         }
         urls.append(fileUrl)
         return urls.map { $0.absoluteString }
+    }
+
+    private func fileURL(for request: Request) -> URL {
+        var fileUrl = url
+        if let host = request.url.host {
+            fileUrl.appendPathComponent(host)
+        }
+        fileUrl.appendPathComponent(request.url.path)
+        if fileUrl.absoluteString.hasSuffix("/") {
+            fileUrl.appendPathComponent("index")
+        }
+        return fileUrl
     }
 }

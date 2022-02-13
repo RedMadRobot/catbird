@@ -16,8 +16,8 @@ final class AppTests: AppTestCase {
     func testWriteFileMock() throws {
         // Given
         let api = JokeAPI()
-        XCTAssertNoThrow(try setUpApp(redirectUrl: api.host), """
-        Launch the app in redirect mode to \(api.host) and write files to a folder \(mocksDirectory)
+        XCTAssertNoThrow(try setUpApp(isRecordMode: true, redirectUrl: api.url), """
+        Launch the app in redirect mode to \(api.url) and write files to a folder \(mocksDirectory)
         """)
         addTeardownBlock {
             let path = self.mocksDirectory + api.root
@@ -39,6 +39,38 @@ final class AppTests: AppTestCase {
         // Then
         for joke in api.jokes {
             let path = mocksDirectory + joke.path + ".txt"
+            XCTAssertEqual(try String(contentsOfFile: path), joke.text, """
+            The joke by \(joke.id) was saved to a file at path \(path)
+            """)
+        }
+    }
+
+    func testWriteFileMockWithProxy() throws {
+        // Given
+        let api = JokeAPI()
+        let directory = "\(mocksDirectory)/\(api.host)"
+        XCTAssertNoThrow(try setUpApp(isRecordMode: true, proxyEnabled: true))
+        addTeardownBlock {
+            XCTAssertNotNil(try? FileManager.default.removeItem(atPath: directory), """
+            Remove created files and directories at \(directory)
+            """)
+        }
+
+        // When
+        for joke in api.jokes {
+            try app.test(.GET, joke.path, headers: api.headers, beforeRequest: { request in
+                request.url = URI(scheme: .http, host: api.host, path: request.url.path)
+            }, afterResponse: { response in
+                XCTAssertEqual(response.status.code, 200)
+                XCTAssertEqual(response.body.string, joke.text, """
+                Returned the joke by index \(joke.id)
+                """)
+            })
+        }
+
+        // Then
+        for joke in api.jokes {
+            let path = directory + joke.path + ".txt"
             XCTAssertEqual(try String(contentsOfFile: path), joke.text, """
             The joke by \(joke.id) was saved to a file at path \(path)
             """)
@@ -85,6 +117,37 @@ final class AppTests: AppTestCase {
             XCTAssertEqual(response.status.code, 200)
             XCTAssertEqual(response.body.string, "dynamic mock")
         }
+    }
+
+    func testAddMockWithProxy() throws {
+        // Given
+        XCTAssertNoThrow(try setUpApp(isRecordMode: false, proxyEnabled: true))
+
+        let api = JokeAPI()
+        let mockJoke = api.jokes[0]
+        let proxyJoke = api.jokes[1]
+
+        let mock = ResponseMock(status: 200, body: Data(mockJoke.text.utf8))
+        let mockUrl = URI(scheme: .http, host: api.host, path: mockJoke.path).string
+        let pattern = RequestPattern(method: .GET, url: mockUrl)
+
+        // When
+        try app.perform(.update(pattern, mock))
+
+        // Then
+        try app.test(.GET, mockJoke.path, headers: api.headers, beforeRequest: { request in
+            request.url = URI(scheme: .http, host: api.host, path: request.url.path)
+        }, afterResponse: { response in
+            XCTAssertEqual(response.status.code, 200)
+            XCTAssertEqual(response.body.string, mockJoke.text, "mock response")
+        })
+
+        try app.test(.GET, proxyJoke.path, headers: api.headers, beforeRequest: { request in
+            request.url = URI(scheme: .http, host: api.host, path: request.url.path)
+        }, afterResponse: { response in
+            XCTAssertEqual(response.status.code, 200)
+            XCTAssertEqual(response.body.string, proxyJoke.text, "proxy response")
+        })
     }
 
     func testUpdateMock() throws {
@@ -294,3 +357,4 @@ final class AppTests: AppTestCase {
         }
     }
 }
+
