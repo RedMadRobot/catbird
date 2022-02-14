@@ -42,10 +42,11 @@ jobs:
           swift_build="swift build -c release --disable-sandbox --package-path Packages/CatbirdApp"
           $swift_build
           bin_path=$($swift_build --show-bin-path)
+          echo "$bin_path"
           echo "::set-output name=bin_path::$bin_path/catbird"
         shell: bash
       - name: Upload binary
         uses: actions/upload-artifact@v2
         with:
-          name: catbird-linux
+          name: catbird
           path: ${{ steps.build.outputs.bin_path }}
