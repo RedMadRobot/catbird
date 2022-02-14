@@ -40,7 +40,7 @@ jobs:
       - name: Build catbird app
         id: build
         run: |
-          swift_build="swift build -c release --disable-sandbox --package-path Packages/CatbirdApp -Xswiftc -static-executable -Xswiftc -static-stdlib"
+          swift_build="swift build -c release --disable-sandbox --package-path Packages/CatbirdApp --static-swift-stdlib"
           $swift_build
           bin_path=$($swift_build --show-bin-path)
           echo "$bin_path"
