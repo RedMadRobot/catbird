@@ -38,7 +38,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build catbird app
-        run:
+        run: |
           swift_build="swift build -c release --disable-sandbox --package-path Packages/CatbirdApp"
           $swift_build
           bin_path=$($swift_build --show-bin-path)
