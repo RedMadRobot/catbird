@@ -29,3 +29,23 @@ jobs:
         uses: actions/checkout@v2
       - name: Test catbird app
         run: swift test --package-path Packages/CatbirdApp --disable-automatic-resolution
+  test-linux-build:
+    name: Build on Linux
+    runs-on: ubuntu-20.04
+    container:
+      image: swift:5.5.1-focal
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build catbird app
+        run:
+          swift_build="swift build -c release --disable-sandbox --package-path Packages/CatbirdApp"
+          $swift_build
+          bin_path=$($swift_build --show-bin-path)
+          echo "::set-output name=bin_path::$bin_path/catbird"
+        shell: bash
+      - name: Upload binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: catbird-linux
+          path: ${{ steps.build.outputs.bin_path }}
