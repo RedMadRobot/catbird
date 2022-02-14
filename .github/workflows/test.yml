@@ -38,6 +38,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build catbird app
+        id: build
         run: |
           swift_build="swift build -c release --disable-sandbox --package-path Packages/CatbirdApp"
           $swift_build
@@ -48,5 +49,5 @@ jobs:
       - name: Upload binary
         uses: actions/upload-artifact@v2
         with:
-          name: catbird
+          name: catbird-linux
           path: ${{ steps.build.outputs.bin_path }}
