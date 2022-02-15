@@ -1,3 +1,5 @@
+#if !os(Linux)
+
 import Foundation
 
 /// API Client to mock server.
@@ -82,3 +84,5 @@ public final class Catbird {
     }
 
 }
+
+#endif

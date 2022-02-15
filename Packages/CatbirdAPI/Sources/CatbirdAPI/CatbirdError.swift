@@ -15,12 +15,13 @@ public struct CatbirdError: LocalizedError, CustomNSError {
     /// The domain of the error.
     public static var errorDomain = "com.redmadrobot.catbird.APIErrorDomain"
 
-    /// HTTP ststus code.
+    /// HTTP status code.
     public let errorCode: Int
 
     /// A localized message describing the reason for the failure.
     public let failureReason: String?
 
+#if !os(Linux)
     init?(response: HTTPURLResponse, data: Data?) {
         guard !(200..<300).contains(response.statusCode) else { return nil }
         self.errorCode = response.statusCode
@@ -28,10 +29,15 @@ public struct CatbirdError: LocalizedError, CustomNSError {
             try? JSONDecoder().decode(ErrorResponse.self, from: body).reason
         }
     }
+#endif
 
     /// A localized message describing what error occurred.
     public var errorDescription: String? {
+#if !os(Linux)
         return HTTPURLResponse.localizedString(forStatusCode: errorCode)
+#else
+        return "Status code: \(errorCode)"
+#endif
     }
 
     /// The user-info dictionary.

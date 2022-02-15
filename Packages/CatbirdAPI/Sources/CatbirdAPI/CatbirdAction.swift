@@ -49,7 +49,7 @@ extension CatbirdAction {
     public static let parallelIdHeaderField = "X-Catbird-Parallel-Id"
 
     private static let encoder = JSONEncoder()
-
+#if !os(Linux)
     /// Create a new `URLRequest`.
     ///
     /// - Parameter url: Catbird server base url.
@@ -64,7 +64,7 @@ extension CatbirdAction {
         request.httpBody = try CatbirdAction.encoder.encode(self)
         return request
     }
-
+#endif
 }
 
 // MARK: - Codable

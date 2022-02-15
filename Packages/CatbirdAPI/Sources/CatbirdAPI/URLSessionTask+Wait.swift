@@ -1,3 +1,5 @@
+#if !os(Linux)
+
 import Foundation
 
 extension URLSessionTask {
@@ -12,3 +14,5 @@ extension URLSessionTask {
     }
 
 }
+
+#endif
