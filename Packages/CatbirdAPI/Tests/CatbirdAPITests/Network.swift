@@ -1,3 +1,5 @@
+#if !os(Linux)
+
 import Foundation
 
 final class Network: URLProtocol {
@@ -46,3 +48,5 @@ final class Network: URLProtocol {
 
     override func stopLoading() {}
 }
+
+#endif

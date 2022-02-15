@@ -2,6 +2,9 @@ import Foundation
 
 /// Catbird API action.
 public enum CatbirdAction: Equatable {
+    /// Header name for parallel ID.
+    public static let parallelIdHeaderField = "X-Catbird-Parallel-Id"
+
     /// Add, or insert `ResponseMock` for `RequestPattern`.
     case update(RequestPattern, ResponseMock)
 
@@ -40,31 +43,6 @@ extension CatbirdAction {
     public static func remove(_ mock: CatbirdMockConvertible) -> CatbirdAction {
         CatbirdAction.remove(mock.pattern)
     }
-}
-
-// MARK: - CatbirdAction + URLRequest
-
-extension CatbirdAction {
-    /// Header name for parallel ID.
-    public static let parallelIdHeaderField = "X-Catbird-Parallel-Id"
-
-    private static let encoder = JSONEncoder()
-#if !os(Linux)
-    /// Create a new `URLRequest`.
-    ///
-    /// - Parameter url: Catbird server base url.
-    /// - Returns: Request to mock server.
-    func makeRequest(to url: URL, parallelId: String? = nil) throws -> URLRequest {
-        var request = URLRequest(url: url.appendingPathComponent("catbird/api/mocks"))
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        if let parallelId = parallelId {
-            request.addValue(parallelId, forHTTPHeaderField: CatbirdAction.parallelIdHeaderField)
-        }
-        request.httpBody = try CatbirdAction.encoder.encode(self)
-        return request
-    }
-#endif
 }
 
 // MARK: - Codable

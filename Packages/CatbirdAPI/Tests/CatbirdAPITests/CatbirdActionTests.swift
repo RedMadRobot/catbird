@@ -1,3 +1,5 @@
+#if !os(Linux)
+
 @testable import CatbirdAPI
 import XCTest
 
@@ -111,3 +113,5 @@ final class CatbirdActionTests: XCTestCase {
         }, action)
     }
 }
+
+#endif

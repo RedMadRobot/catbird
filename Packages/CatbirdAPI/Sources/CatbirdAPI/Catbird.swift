@@ -1,5 +1,9 @@
 #if !os(Linux)
-
+/*
+ On Linux, URLSession and URLRequest are not in Foundation, but in FoundationNetwork.
+ Foundation Network has transitive dependencies that prevent compiling a static binary.
+ Catbird uses only models from CatbirdAPI, so URLSession was removed from the Linux build.
+ */
 import Foundation
 
 /// API Client to mock server.
@@ -85,4 +89,45 @@ public final class Catbird {
 
 }
 
+extension URLSessionTask {
+    /// Wait until task completed.
+    fileprivate func wait() {
+        guard let timeout = currentRequest?.timeoutInterval else { return }
+        let limitDate = Date(timeInterval: timeout, since: Date())
+        while state == .running && RunLoop.current.run(mode: .default, before: limitDate) {
+            // wait
+        }
+    }
+}
+
+extension CatbirdError {
+    init?(response: HTTPURLResponse, data: Data?) {
+        guard !(200..<300).contains(response.statusCode) else { return nil }
+        self.errorCode = response.statusCode
+        self.failureReason = data.flatMap { (body: Data) in
+            try? JSONDecoder().decode(ErrorResponse.self, from: body).reason
+        }
+    }
+}
+
+extension CatbirdAction {
+    private static let encoder = JSONEncoder()
+
+    /// Create a new `URLRequest`.
+    ///
+    /// - Parameter url: Catbird server base url.
+    /// - Returns: Request to mock server.
+    func makeRequest(to url: URL, parallelId: String? = nil) throws -> URLRequest {
+        var request = URLRequest(url: url.appendingPathComponent("catbird/api/mocks"))
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let parallelId = parallelId {
+            request.addValue(parallelId, forHTTPHeaderField: CatbirdAction.parallelIdHeaderField)
+        }
+        request.httpBody = try CatbirdAction.encoder.encode(self)
+        return request
+    }
+}
+
 #endif
+
