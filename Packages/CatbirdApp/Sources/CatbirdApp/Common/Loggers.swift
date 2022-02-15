@@ -13,7 +13,10 @@ enum Loggers {
         return Logging.Logger(label: CatbirdInfo.current.domain)
 #else
         return Logging.Logger(label: CatbirdInfo.current.domain) {
-            OSLogHandler(subsystem: $0, category: category)
+            Logging.MultiplexLogHandler([
+                OSLogHandler(subsystem: $0, category: category),
+                Logging.StreamLogHandler.standardOutput(label: $0)
+            ])
         }
 #endif
     }

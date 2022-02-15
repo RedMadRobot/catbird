@@ -208,9 +208,44 @@ $ xed .
 
 ## Environment variables
 
-`CATBIRD_MOCKS_DIR` — Directory where static mocks are located.
+- `CATBIRD_MOCKS_DIR` — Directory where static mocks are located.
+- `CATBIRD_RECORD_MODE` —  set this variable to `1` so that the application starts recording HTTP responses along the path set in `CATBIRD_MOCKS_DIR`. Default `0`.
+- `CATBIRD_REDIRECT_URL` — set this url to forward direct requests to catbird. By default, nil. If the recording mode is not enabled, then first the responses will be searched in the mocks and only if nothing is found, the request will be forwarded.
+- `CATBIRD_PROXY_ENABLED` — set this variable to `1` to forward proxy requests to catbird. By default, `0`. If the recording mode is not enabled, then first the responses will be searched in the mocks and only if nothing is found, the request will be proxied.
 
-`CATBIRD_PROXY_URL` — If you specify this URL Catbird will run in write mode. In this mode, requests to Catbird will be redirected to the `CATBIRD_PROXY_URL`. Upon receipt of response from the server it will be written to the `CATBIRD_MOCKS_DIR` directory.
+> Catbird supports proxying only HTTP requests. HTTPS requests are not supported!
+
+### Redirect example
+
+Run catbird with `CATBIRD_REDIRECT_URL`.
+
+```bash
+CATBIRD_REDIRECT_URL=https://api.github.com ./catbird
+```
+
+All direct requests will be forwarded to `CATBIRD_REDIRECT_URL`.
+
+```bash
+curl http://127.0.0.1:8080/zen
+```
+
+The response will be returned as to the request https://api.github.com/zen
+
+### Proxy example
+
+Run catbird with `CATBIRD_PROXY_ENABLED=1`.
+
+```bash
+CATBIRD_PROXY_ENABLED=1 ./catbird
+```
+
+By enabling this mode, the catbird will be running as a local http proxy server. 
+You can configure your http client to use this proxy, and all requests will be proxied thought the catbird and redirected to the real host.
+It might be helpful if you don't want to change the base url of your requests.
+
+```bash
+curl http://api.github.com/zen --proxy http://127.0.0.1:8080
+```
 
 ## Logs
 

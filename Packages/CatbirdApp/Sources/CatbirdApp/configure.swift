@@ -1,5 +1,6 @@
 import CatbirdAPI
 import Vapor
+import NIOSSL
 
 public struct CatbirdInfo: Content {
     public static let current = CatbirdInfo(
@@ -28,26 +29,38 @@ public func configure(_ app: Application, _ configuration: AppConfiguration) thr
         store: InMemoryResponseStore(),
         logger: Loggers.inMemoryStore)
 
-    // MARK: - Register Middlewares
+    // MARK: - Register Middleware
 
     // Pubic resource for web page
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
-    switch configuration.mode {
-    case .read:
-        app.logger.info("Read mode")
-        // try read from static mocks if route not found
-        app.middleware.use(AnyMiddleware.notFound(fileStore.response))
-        // try read from dynamic mocks
-        app.middleware.use(AnyMiddleware.notFound(inMemoryStore.response))
-    case .write(let url):
-        app.logger.info("Write mode")
+    if configuration.isRecordMode {
+        app.logger.info("Record mode")
+        app.http.client.configuration.decompression = .enabled(limit: .none)
         // capture response and write to file
         app.middleware.use(AnyMiddleware.capture { request, response in
+            if response.headers.contains(name: "Content-encoding") {
+                response.headers.remove(name: "Content-encoding")
+            }
             let pattern = RequestPattern(method: .init(request.method.rawValue), url: request.url.string)
             let mock = ResponseMock(status: Int(response.status.code), body: response.body.data)
             return fileStore.perform(.update(pattern, mock), for: request).map { _ in response }
         })
-        // redirect request to another server
+        // catch 404 and try read from real server
+        if configuration.proxyEnabled {
+            app.middleware.use(ProxyMiddleware())
+        }
+    } else {
+        app.logger.info("Read mode")
+        // catch 404 and try read from real server
+        if configuration.proxyEnabled {
+            app.middleware.use(ProxyMiddleware())
+        }
+        // try read from static mocks if route not found
+        app.middleware.use(AnyMiddleware.notFound(fileStore.response))
+        // try read from dynamic mocks
+        app.middleware.use(AnyMiddleware.notFound(inMemoryStore.response))
+    }
+    if let url = configuration.redirectUrl {
         app.middleware.use(RedirectMiddleware(serverURL: url))
     }
 

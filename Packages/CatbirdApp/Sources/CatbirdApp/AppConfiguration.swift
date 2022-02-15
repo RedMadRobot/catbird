@@ -1,19 +1,16 @@
-import Foundation
+import Vapor
 
 /// Application configuration.
 public struct AppConfiguration {
 
-    /// Application work mode.
-    public enum Mode: Equatable {
-        case write(URL)
-        case read
-    }
+    public let isRecordMode: Bool
 
-    /// Application work mode.
-    public let mode: Mode
+    public let proxyEnabled: Bool
 
     /// The directory for mocks.
     public let mocksDirectory: URL
+
+    public let redirectUrl: URL?
 
     public let maxBodySize: String
 }
@@ -38,11 +35,16 @@ extension AppConfiguration {
             return url
         }()
 
+        let isRecordMode = environment["CATBIRD_RECORD_MODE"].flatMap { NSString(string: $0).boolValue } ?? false
+        let proxyEnabled = environment["CATBIRD_PROXY_ENABLED"].flatMap { NSString(string: $0).boolValue } ?? false
+        let redirectUrl = environment["CATBIRD_REDIRECT_URL"].flatMap { URL(string: $0) }
         let maxBodySize = environment["CATBIRD_MAX_BODY_SIZE", default: "50mb"]
 
-        if let path = environment["CATBIRD_PROXY_URL"], let url = URL(string: path) {
-            return AppConfiguration(mode: .write(url), mocksDirectory: mocksDirectory, maxBodySize: maxBodySize)
-        }
-        return AppConfiguration(mode: .read, mocksDirectory: mocksDirectory, maxBodySize: maxBodySize)
+        return AppConfiguration(
+            isRecordMode: isRecordMode,
+            proxyEnabled: proxyEnabled,
+            mocksDirectory: mocksDirectory,
+            redirectUrl: redirectUrl,
+            maxBodySize: maxBodySize)
     }
 }

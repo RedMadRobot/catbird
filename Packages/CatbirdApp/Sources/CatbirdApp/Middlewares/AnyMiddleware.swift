@@ -2,11 +2,11 @@ import Vapor
 
 final class AnyMiddleware: Middleware {
 
-    private typealias Handler = (Request, Responder) -> EventLoopFuture<Response>
+    typealias Handler = (Request, Responder) -> EventLoopFuture<Response>
 
     private let handler: Handler
 
-    private init(handler: @escaping Handler) {
+    init(handler: @escaping Handler) {
         self.handler = handler
     }
 
@@ -24,19 +24,9 @@ extension AnyMiddleware {
     /// - Returns: A new `Middleware`.
     static func notFound(_ handler: @escaping (Request) -> EventLoopFuture<Response>) -> Middleware {
         AnyMiddleware { (request, responder) -> EventLoopFuture<Response> in
-            responder.respond(to: request)
-                .flatMap { (response: Response) -> EventLoopFuture<Response> in
-                    if response.status == .notFound {
-                        return handler(request)
-                    }
-                    return request.eventLoop.makeSucceededFuture(response)
-                }
-                .flatMapError { (error: Error) -> EventLoopFuture<Response> in
-                    if let abort = error as? AbortError, abort.status == .notFound {
-                        return handler(request)
-                    }
-                    return request.eventLoop.makeFailedFuture(error)
-                }
+            responder.respond(to: request).notFound {
+                handler(request)
+            }
         }
     }
 
@@ -48,4 +38,24 @@ extension AnyMiddleware {
         }
     }
 
+}
+
+extension EventLoopFuture where Value: Response {
+    func notFound(
+        _ handler: @escaping () -> EventLoopFuture<Response>
+    ) -> EventLoopFuture<Response> {
+
+        return flatMap { [eventLoop] (response: Response) -> EventLoopFuture<Response> in
+            if response.status == .notFound {
+                return handler()
+            }
+            return eventLoop.makeSucceededFuture(response)
+        }
+        .flatMapError { [eventLoop] (error: Error) -> EventLoopFuture<Response> in
+            if let abort = error as? AbortError, abort.status == .notFound {
+                return handler()
+            }
+            return eventLoop.makeFailedFuture(error)
+        }
+    }
 }
