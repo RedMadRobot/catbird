@@ -239,7 +239,9 @@ Run catbird with `CATBIRD_PROXY_ENABLED=1`.
 CATBIRD_PROXY_ENABLED=1 ./catbird
 ```
 
-All requests will be proxied and redirected to the real host.
+By enabling this mode, the catbird will be running as a local http proxy server. 
+You can configure your http client to use this proxy, and all requests will be proxied thought the catbird and redirected to the real host.
+It might be helpful if you don't want to change the base url of your requests.
 
 ```bash
 curl http://api.github.com/zen --proxy http://127.0.0.1:8080
