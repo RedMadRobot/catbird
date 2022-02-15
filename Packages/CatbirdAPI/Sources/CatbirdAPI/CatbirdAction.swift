@@ -1,9 +1,5 @@
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 /// Catbird API action.
 public enum CatbirdAction: Equatable {
     /// Add, or insert `ResponseMock` for `RequestPattern`.

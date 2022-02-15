@@ -1,9 +1,5 @@
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 /// From `Vapor.ErrorMiddleware`.
 private struct ErrorResponse: Codable {
 
