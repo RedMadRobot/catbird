@@ -78,7 +78,7 @@ public final class Catbird {
             case (_, let error?):
                 completion(error)
             case (let http as HTTPURLResponse, _):
-                completion(CatbirdError(response: http, data: data))
+                completion(CatbirdError(statusCode: http.statusCode, data: data))
             default:
                 completion(nil)
             }
@@ -100,32 +100,17 @@ extension URLSessionTask {
     }
 }
 
-extension CatbirdError {
-    init?(response: HTTPURLResponse, data: Data?) {
-        guard !(200..<300).contains(response.statusCode) else { return nil }
-        self.errorCode = response.statusCode
-        self.failureReason = data.flatMap { (body: Data) in
-            try? JSONDecoder().decode(ErrorResponse.self, from: body).reason
-        }
-    }
-}
-
 extension CatbirdAction {
-    private static let encoder = JSONEncoder()
-
-    /// Create a new `URLRequest`.
-    ///
-    /// - Parameter url: Catbird server base url.
-    /// - Returns: Request to mock server.
     func makeRequest(to url: URL, parallelId: String? = nil) throws -> URLRequest {
-        var request = URLRequest(url: url.appendingPathComponent("catbird/api/mocks"))
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        if let parallelId = parallelId {
-            request.addValue(parallelId, forHTTPHeaderField: CatbirdAction.parallelIdHeaderField)
+        let request = try makeHTTPRequest(to: url, parallelId: parallelId)
+
+        var urlRequest = URLRequest(url: request.url)
+        urlRequest.httpMethod = request.httpMethod
+        for (key, value) in request.headers {
+            urlRequest.addValue(value, forHTTPHeaderField: key)
         }
-        request.httpBody = try CatbirdAction.encoder.encode(self)
-        return request
+        urlRequest.httpBody = request.httpBody
+        return urlRequest
     }
 }
 

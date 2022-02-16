@@ -1,7 +1,7 @@
 import Foundation
 
 /// From `Vapor.ErrorMiddleware`.
-struct ErrorResponse: Codable {
+private struct ErrorResponse: Codable {
 
     /// Always `true` to indicate this is a non-typical JSON response.
     let error: Bool
@@ -20,6 +20,14 @@ public struct CatbirdError: LocalizedError, CustomNSError {
 
     /// A localized message describing the reason for the failure.
     public let failureReason: String?
+
+    init?(statusCode: Int, data: Data?) {
+        guard !(200..<300).contains(statusCode) else { return nil }
+        self.errorCode = statusCode
+        self.failureReason = data.flatMap { (body: Data) in
+            try? JSONDecoder().decode(ErrorResponse.self, from: body).reason
+        }
+    }
 
     /// A localized message describing what error occurred.
     public var errorDescription: String? {
