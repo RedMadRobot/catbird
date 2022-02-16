@@ -1,7 +1,7 @@
 #if !os(Linux)
 /*
- On Linux, URLSession and URLRequest are not in Foundation, but in FoundationNetwork.
- Foundation Network has transitive dependencies that prevent compiling a static binary.
+ On Linux, URLSession and URLRequest are not in Foundation, but in FoundationNetworking.
+ FoundationNetworking has transitive dependencies that prevent compiling a static binary.
  Catbird uses only models from CatbirdAPI, so URLSession was removed from the Linux build.
  */
 import Foundation
