@@ -14,4 +14,4 @@ BUILD_OPTIONS=(
 SWIFT_BUILD="swift build ${BUILD_OPTIONS[*]}"
 $SWIFT_BUILD
 BIN_PATH=$($SWIFT_BUILD --show-bin-path)
-cp $BIN_PATH/catbird ./catbird-linux
+cp "$BIN_PATH"/catbird ./catbird-linux
