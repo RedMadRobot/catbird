@@ -4,7 +4,7 @@ import NIOSSL
 
 public struct CatbirdInfo: Content {
     public static let current = CatbirdInfo(
-        version: "0.10.0",
+        version: "0.11.0",
         domain: "com.redmadrobot.catbird",
         github: "https://github.com/redmadrobot/catbird/")
 
