@@ -4,11 +4,11 @@ import XCTVapor
 extension Application {
 
     func perform(_ action: CatbirdAction, parallelId: String? = nil, file: StaticString = #file, line: UInt = #line) throws {
-        let request = try action.makeRequest(to: URL(string: "/")!, parallelId: parallelId)
-        let method = try XCTUnwrap(request.httpMethod.map { HTTPMethod(rawValue: $0) }, file: file, line: line)
-        let path = try XCTUnwrap(request.url?.path, file: file, line: line)
+        let request = try action.makeHTTPRequest(to: URL(string: "/")!, parallelId: parallelId)
+        let method = HTTPMethod(rawValue: request.httpMethod)
+        let path = request.url.path
         var headers = HTTPHeaders()
-        request.allHTTPHeaderFields?.forEach { key, value in
+        request.headers.forEach { key, value in
             headers.add(name: key, value: value)
         }
         let body = request.httpBody.map { (data: Data) -> ByteBuffer in

@@ -1,9 +1,5 @@
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 /// From `Vapor.ErrorMiddleware`.
 private struct ErrorResponse: Codable {
 
@@ -19,15 +15,15 @@ public struct CatbirdError: LocalizedError, CustomNSError {
     /// The domain of the error.
     public static var errorDomain = "com.redmadrobot.catbird.APIErrorDomain"
 
-    /// HTTP ststus code.
+    /// HTTP status code.
     public let errorCode: Int
 
     /// A localized message describing the reason for the failure.
     public let failureReason: String?
 
-    init?(response: HTTPURLResponse, data: Data?) {
-        guard !(200..<300).contains(response.statusCode) else { return nil }
-        self.errorCode = response.statusCode
+    init?(statusCode: Int, data: Data?) {
+        guard !(200..<300).contains(statusCode) else { return nil }
+        self.errorCode = statusCode
         self.failureReason = data.flatMap { (body: Data) in
             try? JSONDecoder().decode(ErrorResponse.self, from: body).reason
         }
@@ -35,7 +31,11 @@ public struct CatbirdError: LocalizedError, CustomNSError {
 
     /// A localized message describing what error occurred.
     public var errorDescription: String? {
+#if !os(Linux)
         return HTTPURLResponse.localizedString(forStatusCode: errorCode)
+#else
+        return "Status code: \(errorCode)"
+#endif
     }
 
     /// The user-info dictionary.

@@ -1,8 +1,10 @@
+#if !os(Linux)
+/*
+ On Linux, URLSession and URLRequest are not in Foundation, but in FoundationNetworking.
+ FoundationNetworking has transitive dependencies that prevent compiling a static binary.
+ Catbird uses only models from CatbirdAPI, so URLSession was removed from the Linux build.
+ */
 import Foundation
-
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
 
 /// API Client to mock server.
 public final class Catbird {
@@ -76,7 +78,7 @@ public final class Catbird {
             case (_, let error?):
                 completion(error)
             case (let http as HTTPURLResponse, _):
-                completion(CatbirdError(response: http, data: data))
+                completion(CatbirdError(statusCode: http.statusCode, data: data))
             default:
                 completion(nil)
             }
@@ -86,3 +88,31 @@ public final class Catbird {
     }
 
 }
+
+extension URLSessionTask {
+    /// Wait until task completed.
+    fileprivate func wait() {
+        guard let timeout = currentRequest?.timeoutInterval else { return }
+        let limitDate = Date(timeInterval: timeout, since: Date())
+        while state == .running && RunLoop.current.run(mode: .default, before: limitDate) {
+            // wait
+        }
+    }
+}
+
+extension CatbirdAction {
+    func makeRequest(to url: URL, parallelId: String? = nil) throws -> URLRequest {
+        let request = try makeHTTPRequest(to: url, parallelId: parallelId)
+
+        var urlRequest = URLRequest(url: request.url)
+        urlRequest.httpMethod = request.httpMethod
+        for (key, value) in request.headers {
+            urlRequest.addValue(value, forHTTPHeaderField: key)
+        }
+        urlRequest.httpBody = request.httpBody
+        return urlRequest
+    }
+}
+
+#endif
+

@@ -1,9 +1,5 @@
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 /// Catbird API action.
 public enum CatbirdAction: Equatable {
     /// Add, or insert `ResponseMock` for `RequestPattern`.
@@ -46,7 +42,7 @@ extension CatbirdAction {
     }
 }
 
-// MARK: - CatbirdAction + URLRequest
+// MARK: - CatbirdAction + Request
 
 extension CatbirdAction {
     /// Header name for parallel ID.
@@ -54,21 +50,29 @@ extension CatbirdAction {
 
     private static let encoder = JSONEncoder()
 
-    /// Create a new `URLRequest`.
-    ///
-    /// - Parameter url: Catbird server base url.
-    /// - Returns: Request to mock server.
-    func makeRequest(to url: URL, parallelId: String? = nil) throws -> URLRequest {
-        var request = URLRequest(url: url.appendingPathComponent("catbird/api/mocks"))
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        if let parallelId = parallelId {
-            request.addValue(parallelId, forHTTPHeaderField: CatbirdAction.parallelIdHeaderField)
+    struct HTTPRequest {
+        var httpMethod: String
+        var url: URL
+        var headers: [String: String]
+        var httpBody: Data?
+
+        func value(forHTTPHeaderField name: String) -> String? {
+            headers[name]
         }
-        request.httpBody = try CatbirdAction.encoder.encode(self)
-        return request
     }
 
+    func makeHTTPRequest(to url: URL, parallelId: String? = nil) throws -> HTTPRequest {
+        var request = HTTPRequest(
+            httpMethod: "POST",
+            url: url.appendingPathComponent("catbird/api/mocks"),
+            headers: ["Content-Type": "application/json"],
+            httpBody: try CatbirdAction.encoder.encode(self))
+
+        if let parallelId = parallelId {
+            request.headers[CatbirdAction.parallelIdHeaderField] = parallelId
+        }
+        return request
+    }
 }
 
 // MARK: - Codable

@@ -1,3 +1,5 @@
+#if !os(Linux)
+
 @testable import CatbirdAPI
 import XCTest
 
@@ -120,3 +122,5 @@ final class CatbirdTests: XCTestCase {
         return HTTPURLResponse(url: url, statusCode: status, httpVersion: nil, headerFields: nil)!
     }
 }
+
+#endif
