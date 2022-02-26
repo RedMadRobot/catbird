@@ -41,6 +41,9 @@ jobs:
         run: .github/scripts/linux-build.sh
         shell: bash
       - name: Upload GitHub Release Assets
-        run: gh release upload ${{ github.event.release.tag_name }} catbird-linux
+        run: .github/scripts/gh-release-upload.sh
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_ID: ${{ github.event.release.id }}
+          FILE_PATH: catbird-linux
