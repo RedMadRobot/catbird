@@ -14,7 +14,7 @@ final class AuthService {
     let session: URLSession
     
     init() {
-        baseUrl = UserDefaults.standard.url(forKey: "url_key") ?? URL(string: "http://127.0.0.1:8080")!
+        baseUrl = UserDefaults.standard.url(forKey: "url_key") ?? URL(string: "http://localhost:8080")!
         session = URLSession(configuration: .ephemeral, delegate: nil, delegateQueue: .main)
     }
     
