@@ -226,7 +226,7 @@ CATBIRD_REDIRECT_URL=https://api.github.com ./catbird
 All direct requests will be forwarded to `CATBIRD_REDIRECT_URL`.
 
 ```bash
-curl http://127.0.0.1:8080/zen
+curl http://localhost:8080/zen
 ```
 
 The response will be returned as to the request https://api.github.com/zen
@@ -244,7 +244,7 @@ You can configure your http client to use this proxy, and all requests will be p
 It might be helpful if you don't want to change the base url of your requests.
 
 ```bash
-curl http://api.github.com/zen --proxy http://127.0.0.1:8080
+curl http://api.github.com/zen --proxy http://localhost:8080
 ```
 
 ## Logs
@@ -260,7 +260,7 @@ Without this, only error messages will be visible
 
 ## Web
 
-You can view a list of all intercepted requests on the page http://127.0.0.1:8080/catbird
+You can view a list of all intercepted requests on the page http://localhost:8080/catbird
 
 ## Parallel testing
 

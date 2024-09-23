@@ -10,7 +10,7 @@ import Foundation
 public final class Catbird {
 
     /// Localhost IPv4 representation.
-    public static let localhost = URL(string: "http://127.0.0.1:8080")!
+    public static let localhost = URL(string: "http://localhost:8080")!
 
     /// Default network session.
     public static var session: URLSession {
